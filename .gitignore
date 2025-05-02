@@ -181,3 +181,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 ./docs/
+.pre-commit-config.yaml
+.pre-commit-hooks.yaml
