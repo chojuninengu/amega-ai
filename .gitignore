@@ -182,4 +182,3 @@ cython_debug/
 .pypirc
 ./docs/
 .pre-commit-config.yaml
-.pre-commit-hooks.yaml
