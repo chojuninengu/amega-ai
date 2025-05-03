@@ -26,6 +26,18 @@ jobs:
       - name: Build package
         run: python -m build
 
+      - name: Update CHANGELOG.md
+        uses: TriPSs/conventional-changelog-action@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          git-message: 'chore(release): {version}'
+          preset: 'angular'
+          tag-prefix: 'v'
+          output-file: 'CHANGELOG.md'
+          skip-version-file: true
+          skip-commit: true
+          skip-tag: true
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
