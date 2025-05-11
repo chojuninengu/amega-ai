@@ -146,6 +146,14 @@ venv.bak/
 # mkdocs documentation
 /site
 
+# Doc directory patterns
+/doc/
+/docs/
+doc/
+docs/
+*.doc/
+*.docs/
+
 # mypy
 .mypy_cache/
 .dmypy.json
@@ -172,3 +180,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+./docs/
+.pre-commit-config.yaml

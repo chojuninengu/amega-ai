@@ -1,0 +1,66 @@
+name: VSCode Extension
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'vscode-extension/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'vscode-extension/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd vscode-extension
+          npm install
+
+      - name: Run tests
+        run: |
+          cd vscode-extension
+          npm test
+
+      - name: Build extension
+        run: |
+          cd vscode-extension
+          npm run compile
+
+      - name: Package extension
+        run: |
+          cd vscode-extension
+          npm run package
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: vscode-extension
+          path: vscode-extension/*.vsix
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: vscode-extension
+
+      - name: Publish to VS Code Marketplace
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
+          packagePath: '*.vsix' 
