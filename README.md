@@ -15,7 +15,7 @@ A powerful AI-driven platform for intelligent automation and decision making.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/amega-ai.git 
+   git clone https://github.com/Cameroon-Developer-Network/amega-ai.git
    cd amega-ai
    ```
 
