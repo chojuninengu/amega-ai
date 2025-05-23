@@ -8,6 +8,8 @@ on:
 
 jobs:
   test:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -43,6 +45,9 @@ jobs:
         fail_ci_if_error: true
 
   security:
+    permissions:
+      contents: read
+      security-events: read
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -71,6 +76,8 @@ jobs:
         out: 'reports'
 
   docs:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
