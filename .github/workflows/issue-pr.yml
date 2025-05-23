@@ -1,0 +1,71 @@
+name: Issue and PR Management
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+  pull_request:
+    types: [opened, edited, labeled]
+
+jobs:
+  issue-pr-management:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for issue templates
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue || context.payload.pull_request;
+            if (!issue.body) {
+              github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: "Please provide more details about your issue/PR. You can use our issue templates for guidance."
+              });
+            }
+
+      - name: Label PR based on title
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const title = context.payload.pull_request.title.toLowerCase();
+            const labels = [];
+            
+            if (title.includes('feat:')) {
+              labels.push('enhancement');
+            } else if (title.includes('fix:')) {
+              labels.push('bug');
+            } else if (title.includes('docs:')) {
+              labels.push('documentation');
+            } else if (title.includes('chore:')) {
+              labels.push('maintenance');
+            }
+            
+            if (labels.length > 0) {
+              github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                labels: labels
+              });
+            }
+
+      - name: Check for linked issues
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            const issueRegex = /#(\d+)/g;
+            const matches = body.match(issueRegex);
+            
+            if (!matches) {
+              github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: "Please link this PR to an issue using #issue_number in the PR description."
+              });
+            } 
