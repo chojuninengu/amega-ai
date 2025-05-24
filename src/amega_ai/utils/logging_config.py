@@ -11,7 +11,7 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, Dict, Any
 
 # ANSI color codes for colored console output
 COLORS = {
@@ -22,6 +22,38 @@ COLORS = {
     'CRITICAL': '\033[41m', # Red background
     'RESET': '\033[0m'      # Reset color
 }
+
+def _sanitize_context(context: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Sanitize sensitive information from the logging context.
+    
+    Args:
+        context: Dictionary containing context information
+        
+    Returns:
+        Dict with sensitive information redacted
+    """
+    SENSITIVE_KEYS = {'password', 'token', 'secret', 'key', 'auth', 'api_key', 'apikey', 'credential'}
+    sanitized = context.copy()
+    
+    def _should_redact(key: str) -> bool:
+        key_lower = key.lower()
+        return any(sensitive in key_lower for sensitive in SENSITIVE_KEYS)
+    
+    def _redact_dict(d: Dict[str, Any]) -> Dict[str, Any]:
+        result = {}
+        for k, v in d.items():
+            if _should_redact(k):
+                result[k] = '[REDACTED]'
+            elif isinstance(v, dict):
+                result[k] = _redact_dict(v)
+            elif isinstance(v, (list, tuple)):
+                result[k] = [_redact_dict(i) if isinstance(i, dict) else i for i in v]
+            else:
+                result[k] = v
+        return result
+    
+    return _redact_dict(sanitized)
 
 class ColoredFormatter(logging.Formatter):
     """Custom formatter adding colors to log levels and structured information."""
@@ -51,6 +83,27 @@ class ColoredFormatter(logging.Formatter):
             message += f"\nContext: {record.extra_context}"
             
         return message
+
+class SanitizingLoggerAdapter(logging.LoggerAdapter):
+    """Logger adapter that sanitizes sensitive information from extra context."""
+    
+    def process(self, msg: str, kwargs: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+        """
+        Process the logging message and keyword arguments.
+        
+        Args:
+            msg: The message to log
+            kwargs: Keyword arguments for the logging call
+            
+        Returns:
+            Tuple of (message, keyword arguments) with sanitized context
+        """
+        if self.extra:
+            kwargs["extra"] = kwargs.get("extra", {})
+            kwargs["extra"].update(self.extra)
+            if "extra_context" in kwargs["extra"]:
+                kwargs["extra"]["extra_context"] = _sanitize_context(kwargs["extra"]["extra_context"])
+        return msg, kwargs
 
 def setup_logging(
     log_level: Union[str, int] = logging.INFO,
@@ -117,10 +170,7 @@ def setup_logging(
     
     return logger
 
-def get_logger(
-    component_name: str,
-    extra_context: Optional[dict] = None
-) -> logging.Logger:
+def get_logger(component_name: str = "amega_ai", extra_context: Optional[Union[dict, str]] = None) -> logging.Logger:
     """
     Get a logger instance with optional context information.
     
@@ -132,8 +182,6 @@ def get_logger(
         logging.Logger: Logger instance with context
     """
     logger = logging.getLogger(component_name)
-    
     if extra_context:
-        return logging.LoggerAdapter(logger, {'extra_context': extra_context})
-    
+        return SanitizingLoggerAdapter(logger, {"extra_context": extra_context})
     return logger 
