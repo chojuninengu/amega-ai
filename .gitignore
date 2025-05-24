@@ -146,13 +146,6 @@ venv.bak/
 # mkdocs documentation
 /site
 
-# Doc directory patterns
-/doc/
-/docs/
-doc/
-docs/
-*.doc/
-*.docs/
 
 # mypy
 .mypy_cache/
@@ -218,6 +211,7 @@ docker-compose.override.yml
 *.local
 .env.local
 .env.*.local
+.env.*
 
 # System files
 .DS_Store

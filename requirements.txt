@@ -25,6 +25,9 @@ aif360>=0.5.0
 fairlearn>=0.9.0
 great-expectations>=0.16.0
 mlflow>=2.3.0
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+langchain>=0.0.200
 
 # Security & Compliance
 python-jose>=3.3.0
@@ -32,6 +35,8 @@ cryptography>=40.0.0
 pyjwt>=2.6.0
 requests>=2.28.0
 python-dotenv>=1.0.0
+passlib>=1.7.4
+bcrypt>=4.0.0
 
 # Testing & Monitoring
 pytest-asyncio>=0.21.0
@@ -39,13 +44,27 @@ pytest-benchmark>=3.4.0
 locust>=2.12.0
 prometheus-client>=0.16.0
 grafana-api>=1.0.0
+httpx>=0.24.0
+pytest-mock>=3.10.0
 
 # Documentation
 mkdocs>=1.4.0
 mkdocs-material>=9.0.0
+mkdocs-material-extensions>=1.1
+mkdocs-git-revision-date-localized-plugin>=1.2
+mkdocs-minify-plugin>=0.7.0
+mkdocs-glightbox>=0.3.0
+mkdocs-git-authors-plugin>=0.7.0
+mkdocs-git-committers-plugin>=0.2.0
+mkdocs-social-plugin>=0.1.0
+mkdocs-awesome-pages-plugin>=2.8.0
+mkdocs-redirects>=1.2.0
+mkdocs-static-i18n>=0.56
 pdoc>=12.0.0
 
 # Development Tools
 pre-commit>=3.0.0
 gitpython>=3.1.0
 rich>=13.0.0
+pip-tools>=6.13.0
+memory-profiler>=0.61.0
