@@ -50,6 +50,16 @@ pytest-mock>=3.10.0
 # Documentation
 mkdocs>=1.4.0
 mkdocs-material>=9.0.0
+mkdocs-material-extensions>=1.1
+mkdocs-git-revision-date-localized-plugin>=1.2
+mkdocs-minify-plugin>=0.7.0
+mkdocs-glightbox>=0.3.0
+mkdocs-git-authors-plugin>=0.7.0
+mkdocs-git-committers-plugin>=0.2.0
+mkdocs-social-plugin>=0.1.0
+mkdocs-awesome-pages-plugin>=2.8.0
+mkdocs-redirects>=1.2.0
+mkdocs-static-i18n>=0.56
 pdoc>=12.0.0
 
 # Development Tools
