@@ -29,6 +29,8 @@ theme:
     - content.code.annotate
     - content.tabs.link
     - content.tooltips
+    - content.tabs.link
+    - header.autohide
   palette:
     # Light mode
     - media: "(prefers-color-scheme: light)"
@@ -75,8 +77,6 @@ plugins:
   - search
   - tags:
       tags_file: tags.md
-  - minify:
-      minify_html: true
 
 markdown_extensions:
   # Python Markdown
@@ -86,11 +86,15 @@ markdown_extensions:
   - def_list
   - footnotes
   - md_in_html
+  - meta
   - toc:
       permalink: true
       toc_depth: 3
   
   # Python Markdown Extensions
+  # - pymdownx.emoji:
+  #     emoji_generator: !!python/object/apply:pymdownx.emoji.to_svg []
+  #     emoji_index: !!python/object/apply:pymdownx.emoji.twemoji []
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
@@ -103,11 +107,19 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
+  - tables
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.betterem:
+      smart_enable: all
 
 extra:
   analytics:
     provider: google
-    property: !ENV GOOGLE_ANALYTICS_KEY
+    property: G-1234567890
   consent:
     title: Cookie consent
     description: >- 
@@ -124,10 +136,10 @@ extra:
       link: https://github.com/Cameroon-Developer-Network/amega-ai
     - icon: fontawesome/brands/discord
       link: https://discord.gg/amega-ai
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/amega_ai
-    - icon: fontawesome/brands/linkedin
-      link: https://linkedin.com/company/amega-ai
+    # - icon: fontawesome/brands/twitter
+    #   link: https://twitter.com/amega_ai
+    # - icon: fontawesome/brands/linkedin
+    #   link: https://linkedin.com/company/amega-ai
 
 extra_css:
   - stylesheets/extra.css
