@@ -20,7 +20,6 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.prune
-    - navigation.tracking
     - toc.follow
     - toc.integrate
     - search.highlight
@@ -74,16 +73,10 @@ nav:
 
 plugins:
   - search
-  - minify:
-      minify_html: true
-  - git-revision-date-localized:
-      enable_creation_date: true
-      type: datetime
   - tags:
       tags_file: tags.md
-  - social
-  - privacy
-  - optimize
+  - minify:
+      minify_html: true
 
 markdown_extensions:
   # Python Markdown
@@ -98,33 +91,18 @@ markdown_extensions:
       toc_depth: 3
   
   # Python Markdown Extensions
-  - pymdownx.arithmatex:
-      generic: true
-  - pymdownx.betterem:
-      smart_enable: all
-  - pymdownx.caret
-  - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.keys
-  - pymdownx.mark
-  - pymdownx.smartsymbols
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.details
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
-  - pymdownx.tilde
 
 extra:
   analytics:
