@@ -6,67 +6,156 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  custom_dir: docs/overrides
+  font:
+    text: Roboto
+    code: Roboto Mono
   features:
     - navigation.instant
     - navigation.tracking
     - navigation.sections
     - navigation.expand
     - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.prune
+    - navigation.tracking
+    - toc.follow
+    - toc.integrate
     - search.highlight
     - search.share
+    - search.suggest
     - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
   palette:
-    - scheme: default
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - scheme: slate
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: indigo
-      accent: indigo
+      accent: deep purple
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/robot-industrial
+  favicon: assets/favicon.png
 
+# Page tree
 nav:
   - Home: index.md
   - About: about.md
-  - API Documentation: api.md
+  - API Documentation: 
+    - Overview: api/index.md
+    - Authentication: api/auth.md
+    - Endpoints: api/endpoints.md
+    - Examples: api/examples.md
   - Guides:
     - Getting Started: guides/getting-started.md
     - Installation: guides/installation.md
     - Configuration: guides/configuration.md
+    - Best Practices: guides/best-practices.md
   - Development:
     - Contributing: development/contributing.md
     - Code Style: development/code-style.md
     - Testing: development/testing.md
+    - Architecture: development/architecture.md
 
 plugins:
   - search
   - minify:
       minify_html: true
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: datetime
+  - tags:
+      tags_file: tags.md
+  - social
+  - privacy
+  - optimize
 
 markdown_extensions:
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.superfences
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.tabbed:
-      alternate_style: true
+  # Python Markdown
+  - abbr
   - admonition
-  - footnotes
-  - toc:
-      permalink: true
   - attr_list
   - def_list
-  - tables
-  - meta
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      toc_depth: 3
+  
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
 
 extra:
+  analytics:
+    provider: google
+    property: !ENV GOOGLE_ANALYTICS_KEY
+  consent:
+    title: Cookie consent
+    description: >- 
+      We use cookies to recognize your repeated visits and preferences, as well
+      as to measure the effectiveness of our documentation and whether users
+      find what they're searching for. With your consent, you're helping us to
+      make our documentation better.
+    actions:
+      - accept
+      - reject
+      - manage
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Cameroon-Developer-Network/amega-ai
     - icon: fontawesome/brands/discord
-      link: https://discord.gg/amega-ai 
+      link: https://discord.gg/amega-ai
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/amega_ai
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/company/amega-ai
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js 
