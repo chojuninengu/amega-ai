@@ -1,10 +1,10 @@
 site_name: Amega AI
-site_url: https://amega-ai.github.io/amega-ai/
-repo_url: https://github.com/amega-ai/amega-ai
+site_url: https://github.com/Cameroon-Developer-Network/amega-ai
+repo_url: https://github.com/Cameroon-Developer-Network/amega-ai
 repo_name: amega-ai/amega-ai
 edit_uri: edit/main/docs/
 
-docs_dir: new_docs
+docs_dir: docs
 site_dir: site
 
 theme:
