@@ -1,0 +1,128 @@
+/* Custom CSS for Amega AI Documentation */
+
+/* Enhance readability */
+.md-typeset {
+    font-size: 0.75rem;
+    line-height: 1.6;
+}
+
+/* Better code blocks */
+.highlight {
+    background-color: var(--md-code-bg-color);
+    border-radius: 4px;
+}
+
+.highlight pre {
+    padding: 1em;
+    margin: 0;
+    overflow: auto;
+}
+
+/* Custom admonitions */
+.md-typeset .admonition,
+.md-typeset details {
+    border-width: 0;
+    border-left-width: 4px;
+    border-radius: 4px;
+}
+
+/* Enhance tables */
+.md-typeset table:not([class]) {
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.md-typeset table:not([class]) th {
+    background-color: var(--md-primary-fg-color);
+    color: var(--md-primary-bg-color);
+}
+
+/* Better navigation */
+.md-nav__item .md-nav__link--active {
+    font-weight: bold;
+    color: var(--md-primary-fg-color);
+}
+
+/* Enhanced buttons */
+.md-button {
+    transition: all .2s ease-in-out;
+}
+
+.md-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,.1);
+}
+
+/* Custom hero section */
+.md-typeset h1 {
+    color: var(--md-primary-fg-color);
+    font-weight: bold;
+    font-size: 2.5em;
+    margin-bottom: 1em;
+}
+
+/* Better spacing for content */
+.md-content__inner {
+    margin: 0 .8rem 1.2rem;
+    padding-top: 1.2rem;
+}
+
+/* Custom cards */
+.md-typeset .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    grid-gap: 1rem;
+    margin: 1em 0;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) {
+    display: contents;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li,
+.md-typeset .grid > .card {
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    padding: 1rem;
+    transition: all .2s ease-in-out;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li:hover,
+.md-typeset .grid > .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,.15);
+}
+
+/* Custom announcement bar */
+.md-announce {
+    background-color: var(--md-primary-fg-color);
+    color: var(--md-primary-bg-color);
+}
+
+/* Custom footer */
+.md-footer {
+    background-color: var(--md-primary-fg-color--dark);
+}
+
+.md-footer-meta {
+    background-color: var(--md-primary-fg-color--darker);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--md-code-bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--md-primary-fg-color--light);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--md-primary-fg-color);
+} 
