@@ -146,13 +146,6 @@ venv.bak/
 # mkdocs documentation
 /site
 
-# Doc directory patterns
-/doc/
-/docs/
-doc/
-docs/
-*.doc/
-*.docs/
 
 # mypy
 .mypy_cache/
