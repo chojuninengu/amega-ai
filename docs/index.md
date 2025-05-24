@@ -2,85 +2,68 @@
 
 Welcome to the official documentation of Amega AI, an advanced artificial intelligence platform designed for scalable and responsible AI development.
 
-## Overview
+## 🚀 Quick Start
 
-Amega AI is a comprehensive AI development platform that combines:
-- State-of-the-art machine learning models
-- Robust MLOps practices
-- Ethical AI principles
-- Production-ready infrastructure
+```bash
+# Clone the repository
+git clone https://github.com/Cameroon-Developer-Network/amega-ai.git
 
-## Key Features
+# Set up environment
+cd amega-ai
+./scripts/setup_venv.sh
 
-- 🧠 Advanced ML Models
-  - Deep Learning with TensorFlow and PyTorch
-  - Traditional ML with scikit-learn
-  - Custom model architectures
+# Install dependencies
+pip install -r requirements.txt
 
-- 🛠 MLOps Integration
-  - Experiment tracking with MLflow
-  - Model versioning and registry
-  - Automated testing and deployment
-  - Performance monitoring
-
-- 🔒 Security & Compliance
-  - Built-in security scanning
-  - Dependency vulnerability checks
-  - Compliance documentation
-  - Access control and authentication
-
-- 📊 Monitoring & Analytics
-  - Real-time performance metrics
-  - Model drift detection
-  - Resource utilization tracking
-  - Custom dashboards with Grafana
-
-## Getting Started
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/yourusername/amega-ai.git
-   cd amega-ai
-   ```
-
-2. **Set Up Environment**
-   ```bash
-   ./scripts/setup_venv.sh
-   source venv/bin/activate
-   ```
-
-3. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Run Tests**
-   ```bash
-   pytest
-   ```
-
-## Project Structure
-
-```
-amega-ai/
-├── docs/               # Documentation
-├── src/               # Source code
-├── tests/             # Test suite
-├── scripts/           # Utility scripts
-├── configs/           # Configuration files
-└── requirements.txt   # Project dependencies
+# Run the application
+python -m src.amega_ai.main
 ```
 
-## Next Steps
+## 🎯 Key Features
 
-- Check out the [About](about.md) page for project details
-- Review our contribution guidelines
-- Explore the API documentation
-- Join our community
+<div class="grid cards" markdown>
 
-## Support
+- :robot: __Advanced AI Models__
+    - State-of-the-art machine learning
+    - Deep learning integration
+    - Custom model architectures
+    - Model versioning and registry
 
-For support and questions:
-- Open an issue on GitHub
-- Join our community discussions
-- Check our FAQ section 
+- :shield: __Enterprise Security__
+    - Role-based access control
+    - Data encryption
+    - Audit logging
+    - Compliance monitoring
+
+- :chart_with_upwards_trend: __Performance Monitoring__
+    - Real-time metrics
+    - Model drift detection
+    - Resource utilization
+    - Custom dashboards
+
+- :gear: __MLOps Integration__
+    - Automated deployments
+    - CI/CD pipelines
+    - A/B testing
+    - Model lifecycle management
+
+</div>
+
+## 📚 Documentation Sections
+
+- [API Documentation](api/index.md) - Comprehensive API reference
+- [User Guides](guides/getting-started.md) - Step-by-step tutorials
+- [Development](development/contributing.md) - Contributing guidelines
+- [Best Practices](guides/best-practices.md) - Recommended approaches
+
+## 🤝 Community
+
+Join our growing community:
+
+- [GitHub Discussions](https://github.com/Cameroon-Developer-Network/amega-ai/discussions)
+- [Discord Community](https://discord.gg/amega-ai)
+- [Twitter Updates](https://twitter.com/amega_ai)
+
+## 📄 License
+
+Amega AI is released under the [MIT License](https://github.com/Cameroon-Developer-Network/amega-ai/blob/main/LICENSE). 
