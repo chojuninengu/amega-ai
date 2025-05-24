@@ -6,7 +6,6 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
-  custom_dir: docs/overrides
   font:
     text: Roboto
     code: Roboto Mono
