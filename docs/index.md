@@ -23,46 +23,109 @@ python -m src.amega_ai.main
 
 <div class="grid cards" markdown>
 
-- :robot: __Advanced AI Models__
-    - State-of-the-art machine learning
-    - Deep learning integration
-    - Custom model architectures
-    - Model versioning and registry
+-   :material-brain: __Advanced AI Models__
 
-- :shield: __Enterprise Security__
-    - Role-based access control
-    - Data encryption
-    - Audit logging
-    - Compliance monitoring
+    ---
 
-- :chart_with_upwards_trend: __Performance Monitoring__
-    - Real-time metrics
-    - Model drift detection
-    - Resource utilization
-    - Custom dashboards
+    State-of-the-art machine learning capabilities with deep learning integration
+    
+    [:octicons-arrow-right-24: Learn more](guides/ai-models.md)
 
-- :gear: __MLOps Integration__
-    - Automated deployments
-    - CI/CD pipelines
-    - A/B testing
-    - Model lifecycle management
+-   :material-shield-lock: __Enterprise Security__
+
+    ---
+
+    Comprehensive security features including role-based access control and encryption
+    
+    [:octicons-arrow-right-24: Learn more](guides/security.md)
+
+-   :material-chart-line: __Performance Monitoring__
+
+    ---
+
+    Real-time metrics and model drift detection with custom dashboards
+    
+    [:octicons-arrow-right-24: Learn more](guides/monitoring.md)
+
+-   :material-cog-sync: __MLOps Integration__
+
+    ---
+
+    Automated deployments and CI/CD pipelines with A/B testing
+    
+    [:octicons-arrow-right-24: Learn more](guides/mlops.md)
 
 </div>
 
 ## 📚 Documentation Sections
 
-- [API Documentation](api/index.md) - Comprehensive API reference
-- [User Guides](guides/getting-started.md) - Step-by-step tutorials
-- [Development](development/contributing.md) - Contributing guidelines
-- [Best Practices](guides/best-practices.md) - Recommended approaches
+<div class="grid cards" markdown>
+
+-   :material-api: __API Documentation__
+
+    ---
+
+    Comprehensive API reference and integration guides
+    
+    [:octicons-arrow-right-24: View API Docs](api/index.md)
+
+-   :material-book-open-page-variant: __User Guides__
+
+    ---
+
+    Step-by-step tutorials and best practices
+    
+    [:octicons-arrow-right-24: View Guides](guides/getting-started.md)
+
+-   :material-code-tags: __Development__
+
+    ---
+
+    Contributing guidelines and development setup
+    
+    [:octicons-arrow-right-24: Start Contributing](development/contributing.md)
+
+-   :material-lightbulb-on: __Best Practices__
+
+    ---
+
+    Recommended approaches and patterns
+    
+    [:octicons-arrow-right-24: Learn Best Practices](guides/best-practices.md)
+
+</div>
 
 ## 🤝 Community
 
 Join our growing community:
 
-- [GitHub Discussions](https://github.com/Cameroon-Developer-Network/amega-ai/discussions)
-- [Discord Community](https://discord.gg/amega-ai)
-- [Twitter Updates](https://twitter.com/amega_ai)
+<div class="grid cards" markdown>
+
+-   :material-github: __GitHub Discussions__
+
+    ---
+
+    Engage with the community and get help
+    
+    [:octicons-arrow-right-24: Join Discussions](https://github.com/Cameroon-Developer-Network/amega-ai/discussions)
+
+-   :material-discord: __Discord Community__
+
+    ---
+
+    Chat with developers and users
+    
+    [:octicons-arrow-right-24: Join Discord](https://discord.gg/amega-ai)
+
+<!-- -   :material-twitter: __Twitter Updates__
+
+    --- -->
+<!-- 
+    Stay updated with latest news
+    
+    [:octicons-arrow-right-24: Follow Us](https://twitter.com/amega_ai) -->
+
+</div>
 
 ## 📄 License
 
