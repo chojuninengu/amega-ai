@@ -2,70 +2,98 @@ name: Issue and PR Management
 
 on:
   issues:
-    types: [opened, edited, labeled]
+    types: [opened, reopened, edited]
   pull_request:
-    types: [opened, edited, labeled]
+    types: [opened, reopened, edited, synchronize]
 
 jobs:
-  issue-pr-management:
+  triage:
+    name: Issue and PR Triage
     runs-on: ubuntu-latest
     steps:
-      - name: Check for issue templates
+      - uses: actions/checkout@v3
+
+      - name: Label Issues
+        if: github.event_name == 'issues'
         uses: actions/github-script@v6
         with:
           script: |
-            const issue = context.payload.issue || context.payload.pull_request;
-            if (!issue.body) {
-              github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                body: "Please provide more details about your issue/PR. You can use our issue templates for guidance."
-              });
+            try {
+              const issue = context.payload.issue;
+              const labels = [];
+              
+              // Add basic labels based on title
+              if (issue.title.toLowerCase().includes('bug')) {
+                labels.push('bug');
+              }
+              if (issue.title.toLowerCase().includes('feature')) {
+                labels.push('enhancement');
+              }
+              if (issue.title.toLowerCase().includes('docs')) {
+                labels.push('documentation');
+              }
+              
+              if (labels.length > 0) {
+                try {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    labels: labels
+                  });
+                } catch (e) {
+                  console.log('Failed to add labels:', e.message);
+                }
+              }
+            } catch (e) {
+              console.log('Error processing issue:', e.message);
             }
 
-      - name: Label PR based on title
-        uses: actions/github-script@v6
+      - name: Check PR Title
         if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
         with:
           script: |
-            const title = context.payload.pull_request.title.toLowerCase();
-            const labels = [];
-            
-            if (title.includes('feat:')) {
-              labels.push('enhancement');
-            } else if (title.includes('fix:')) {
-              labels.push('bug');
-            } else if (title.includes('docs:')) {
-              labels.push('documentation');
-            } else if (title.includes('chore:')) {
-              labels.push('maintenance');
-            }
-            
-            if (labels.length > 0) {
-              github.rest.issues.addLabels({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.pull_request.number,
-                labels: labels
-              });
+            try {
+              const pr = context.payload.pull_request;
+              const title = pr.title.toLowerCase();
+              const validPrefixes = ['feat:', 'fix:', 'docs:', 'style:', 'refactor:', 'test:', 'chore:'];
+              
+              let hasValidPrefix = false;
+              for (const prefix of validPrefixes) {
+                if (title.startsWith(prefix)) {
+                  hasValidPrefix = true;
+                  break;
+                }
+              }
+              
+              if (!hasValidPrefix) {
+                console.log('PR title should start with one of:', validPrefixes.join(', '));
+                console.log('Current title:', title);
+              }
+            } catch (e) {
+              console.log('Error checking PR title:', e.message);
             }
 
-      - name: Check for linked issues
-        uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
+      - name: Generate Report
+        if: always()
+        run: |
+          echo "## Triage Report" > triage-report.md
+          echo "Event: ${{ github.event_name }}" >> triage-report.md
+          echo "Action: ${{ github.event.action }}" >> triage-report.md
+          if [ "${{ github.event_name }}" = "issues" ]; then
+            echo "Issue: #${{ github.event.issue.number }}" >> triage-report.md
+            echo "Title: ${{ github.event.issue.title }}" >> triage-report.md
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "PR: #${{ github.event.pull_request.number }}" >> triage-report.md
+            echo "Title: ${{ github.event.pull_request.title }}" >> triage-report.md
+          fi
+          echo "Status: Completed" >> triage-report.md
+
+      - name: Upload Report
+        if: always()
+        uses: actions/upload-artifact@v3
         with:
-          script: |
-            const pr = context.payload.pull_request;
-            const body = pr.body || '';
-            const issueRegex = /#(\d+)/g;
-            const matches = body.match(issueRegex);
-            
-            if (!matches) {
-              github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: pr.number,
-                body: "Please link this PR to an issue using #issue_number in the PR description."
-              });
-            } 
+          name: triage-report
+          path: triage-report.md
+          retention-days: 5 

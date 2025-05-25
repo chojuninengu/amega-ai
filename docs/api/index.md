@@ -1,6 +1,19 @@
 # API Documentation
 
-Welcome to the Amega AI API documentation. Our API provides programmatic access to powerful AI capabilities and model management features.
+Welcome to the Amega AI API documentation. This guide will help you understand and integrate with our API.
+
+## Getting Help
+
+If you encounter any issues or have questions:
+
+- Check our [API Reference](reference.md) for detailed endpoint documentation
+- Visit our [Troubleshooting Guide](../guides/troubleshooting.md)
+- Open an issue on [GitHub](https://github.com/amega-ai/amega-ai/issues)
+- Join our [Community Discord](https://discord.gg/amega-ai)
+
+## Authentication
+
+All API requests require authentication. See our [Authentication Guide](auth.md) for details on obtaining and using API keys.
 
 ## Overview
 
@@ -10,14 +23,6 @@ The Amega AI API is organized around REST principles. It accepts JSON-encoded re
 
 ```
 https://api.amega-ai.com/v1
-```
-
-## Authentication
-
-All API endpoints require authentication. We use JWT (JSON Web Tokens) for API authentication. Include your API token in the Authorization header:
-
-```bash
-Authorization: Bearer YOUR_API_TOKEN
 ```
 
 ## Rate Limiting
@@ -74,4 +79,4 @@ Errors follow this format:
 If you need assistance:
 - Check our [examples](examples.md)
 - Join our [Discord community](https://discord.gg/amega-ai)
-- Open an issue on [GitHub](https://github.com/Cameroon-Developer-Network/amega-ai/issues) 
+- Open an issue on [GitHub](https://github.com/amega-ai/amega-ai/issues) 
