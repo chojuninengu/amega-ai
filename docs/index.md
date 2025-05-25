@@ -1,6 +1,18 @@
 # Welcome to Amega AI
 
-Welcome to the official documentation of Amega AI, an advanced artificial intelligence platform designed for scalable and responsible AI development.
+Amega AI is an advanced artificial intelligence platform designed to provide intelligent solutions for various use cases.
+
+## Getting Started
+
+[:octicons-arrow-right-24: Join Discussions](https://github.com/amega-ai/amega-ai/discussions)
+
+## License
+
+Amega AI is released under the [MIT License](https://github.com/amega-ai/amega-ai/blob/main/LICENSE)
+
+## Community
+
+We welcome contributions from the community! Check out our [contribution guidelines](CONTRIBUTING.md) to get started.
 
 ## 🚀 Quick Start
 
@@ -107,7 +119,7 @@ Join our growing community:
 
     Engage with the community and get help
     
-    [:octicons-arrow-right-24: Join Discussions](https://github.com/Cameroon-Developer-Network/amega-ai/discussions)
+    [:octicons-arrow-right-24: Join Discussions](https://github.com/amega-ai/amega-ai/discussions)
 
 -   :material-discord: __Discord Community__
 
@@ -129,4 +141,4 @@ Join our growing community:
 
 ## 📄 License
 
-Amega AI is released under the [MIT License](https://github.com/Cameroon-Developer-Network/amega-ai/blob/main/LICENSE). 
+Amega AI is released under the [MIT License](https://github.com/amega-ai/amega-ai/blob/main/LICENSE). 
