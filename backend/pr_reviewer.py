@@ -4,18 +4,25 @@ from pathlib import Path
 
 class PRReviewer:
     def __init__(self, llm_manager):
-        """Initialize PR Reviewer with LLM manager."""
+        """
+        Initializes the PRReviewer with a language model manager.
+        
+        Args:
+        	llm_manager: An object responsible for managing interactions with a large language model.
+        """
         self.llm_manager = llm_manager
         
     async def review_changes(self, diff_content: str) -> Dict:
         """
-        Review the changes in a pull request and provide suggestions.
+        Analyzes a git diff and returns categorized review feedback using a language model.
         
+        The returned dictionary contains lists of issues, style suggestions, performance considerations, security concerns, and general suggestions extracted from the model's response.
+        	
         Args:
-            diff_content (str): The git diff content to review
-            
+        	diff_content: The git diff string representing code changes to review.
+        
         Returns:
-            Dict containing review comments and suggestions
+        	A dictionary with keys 'ISSUES', 'STYLE', 'PERFORMANCE', 'SECURITY', and 'SUGGESTIONS', each mapping to a list of feedback items.
         """
         # Prepare the prompt for the LLM
         prompt = self._prepare_review_prompt(diff_content)
@@ -30,7 +37,15 @@ class PRReviewer:
         return self._parse_review_response(review_response)
     
     def _prepare_review_prompt(self, diff_content: str) -> str:
-        """Prepare the prompt for the LLM to review the code changes."""
+        """
+        Constructs a detailed prompt instructing the LLM to review code changes for issues, style, performance, security, and suggestions.
+        
+        Args:
+            diff_content: The git diff string representing code changes to be reviewed.
+        
+        Returns:
+            A formatted prompt string for the LLM to analyze and respond with categorized feedback.
+        """
         return f"""Please review the following code changes and provide:
 1. Potential issues or bugs
 2. Code style improvements
@@ -59,7 +74,17 @@ SUGGESTIONS:
 """
     
     def _parse_review_response(self, response: str) -> Dict:
-        """Parse the LLM response into structured feedback."""
+        """
+        Parses the LLM's review response into categorized lists of feedback.
+        
+        The response is split into sections labeled ISSUES, STYLE, PERFORMANCE, SECURITY, and SUGGESTIONS, with each section containing a list of bullet-pointed items.
+        
+        Args:
+            response: The multiline string response from the LLM.
+        
+        Returns:
+            A dictionary mapping each feedback category to a list of extracted suggestions or issues.
+        """
         sections = {
             'ISSUES': [],
             'STYLE': [],
@@ -83,13 +108,15 @@ SUGGESTIONS:
     
     async def suggest_improvements(self, file_content: str) -> Dict:
         """
-        Suggest specific code improvements for a given file.
+        Generates actionable suggestions to improve the provided file content.
+        
+        The suggestions focus on code organization, best practices, performance, error handling, and documentation, and are returned as a list of specific recommendations.
         
         Args:
-            file_content (str): The content of the file to improve
-            
+            file_content: The complete content of the file to analyze.
+        
         Returns:
-            Dict containing suggested improvements
+            A dictionary with a 'suggestions' key containing a list of improvement suggestions.
         """
         prompt = f"""Please suggest improvements for the following code:
 

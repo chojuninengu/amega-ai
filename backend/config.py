@@ -48,7 +48,11 @@ class Settings(BaseSettings):
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def validate_database_url(cls, v: Optional[str]) -> Optional[str]:
-        """Validate database URL if provided."""
+        """
+        Validates the database URL, returning it if it is a string or None otherwise.
+        
+        This method ensures that the database URL is either a valid string or None, allowing for optional configuration.
+        """
         if isinstance(v, str):
         return v
         return None
