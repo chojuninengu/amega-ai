@@ -44,14 +44,14 @@ class Settings(BaseSettings):
         case_sensitive=True,
         env_prefix="AMEGA_"
     )
-    
+
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def validate_database_url(cls, v: Optional[str]) -> Optional[str]:
         """Validate database URL if provided."""
         if isinstance(v, str):
-            return v
+        return v
         return None
 
 # Global settings instance
-settings = Settings() 
+settings = Settings()
