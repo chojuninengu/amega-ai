@@ -4,6 +4,7 @@ AMEGA-AI FastAPI Application
 This module sets up the main FastAPI application instance with configuration
 loading from environment variables, CORS middleware, and basic health check endpoint.
 """
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
@@ -44,11 +45,21 @@ class Settings(BaseSettings):
 # Load settings
 settings = Settings()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan events for FastAPI application."""
+    # Startup
+    app.state.llm_manager = LLMManager(model_name=settings.MODEL_NAME)
+    yield
+    # Shutdown
+    # Add cleanup code here if needed
+
 # Initialize FastAPI app
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description="A powerful AI-driven platform for intelligent automation and decision making.",
+    lifespan=lifespan
 )
 
 # Configure CORS middleware
@@ -59,11 +70,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.on_event("startup")
-async def startup_event():
-    """Initialize services on startup."""
-    app.state.llm_manager = LLMManager(model_name=settings.MODEL_NAME)
 
 # Authentication endpoints
 @app.post("/api/v1/auth/register", response_model=User)
@@ -77,7 +83,7 @@ async def register_user(user: User):
     
     # Create a new user with hashed password
     hashed_password = get_password_hash("default-password")  # In production, get password from request
-    user_dict = user.dict()
+    user_dict = user.model_dump()
     user_dict["hashed_password"] = hashed_password
     fake_users_db[user.username] = user_dict
     
