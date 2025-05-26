@@ -9,12 +9,20 @@ jobs:
     runs-on: ubuntu-latest
     name: Code Review GPT
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run PullRequestGPT
+        uses: pullrequestgpt/actions/pr-gpt-review@v3
+
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       
       - name: Code Review GPT
         uses: mattzcarey/code-review-gpt@main
+
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
