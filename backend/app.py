@@ -5,10 +5,9 @@ This module sets up the main FastAPI application instance with configuration
 loading from environment variables, CORS middleware, and basic health check endpoint.
 """
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi import FastAPI, HTTPException, status, Depends, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic_settings import BaseSettings, SettingsConfigDict
 import uvicorn
 from typing import List
 import logging
@@ -20,6 +19,8 @@ from .auth import (
     get_current_active_user, get_password_hash, fake_users_db,
     ACCESS_TOKEN_EXPIRE_MINUTES
 )
+from .rate_limit import RateLimiter, rate_limit_dependency, RateLimitConfig
+from .config import settings
 
 # Configure logging
 logging.basicConfig(
@@ -28,29 +29,30 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-class Settings(BaseSettings):
-    """Application settings loaded from environment variables."""
-    APP_NAME: str = "AMEGA-AI"
-    APP_VERSION: str = "0.1.0"
-    DEBUG: bool = False
-    HOST: str = "0.0.0.0"
-    PORT: int = 8000
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
-    MODEL_NAME: str = "microsoft/DialoGPT-medium"
-    
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        case_sensitive=True
-    )
-
-# Load settings
-settings = Settings()
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan events for FastAPI application."""
     # Startup
     app.state.llm_manager = LLMManager(model_name=settings.MODEL_NAME)
+    
+    # Initialize rate limiter
+    app.state.rate_limiter = RateLimiter(
+        redis_url=str(settings.REDIS_URL),
+        default_limits={
+            "default": RateLimitConfig(
+                requests=settings.RATE_LIMIT_DEFAULT_RPM,
+                window_seconds=60
+            ),
+            "authenticated": RateLimitConfig(
+                requests=settings.RATE_LIMIT_AUTH_RPM,
+                window_seconds=60
+            ),
+            "chat": RateLimitConfig(
+                requests=settings.RATE_LIMIT_CHAT_RPM,
+                window_seconds=60
+            ),
+        }
+    )
     yield
     # Shutdown
     # Add cleanup code here if needed
@@ -72,9 +74,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def add_rate_limit_headers(request: Request, call_next):
+    """Add rate limit headers to all responses."""
+    response = await call_next(request)
+    if hasattr(request.state, "rate_limit_headers"):
+        for key, value in request.state.rate_limit_headers.items():
+            response.headers[key] = value
+    return response
+
 # Authentication endpoints
 @app.post("/api/v1/auth/register", response_model=User)
-async def register_user(user: User):
+async def register_user(
+    user: User,
+    rate_limit: dict = Depends(rate_limit_dependency())
+):
     """Register a new user."""
     if user.username in fake_users_db:
         raise HTTPException(
@@ -91,7 +105,10 @@ async def register_user(user: User):
     return user
 
 @app.post("/api/v1/auth/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    rate_limit: dict = Depends(rate_limit_dependency())
+):
     """Login endpoint to get access token."""
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
@@ -109,7 +126,10 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/api/v1/users/me", response_model=User)
-async def read_users_me(current_user: User = Depends(get_current_active_user)):
+async def read_users_me(
+    current_user: User = Depends(get_current_active_user),
+    rate_limit: dict = Depends(rate_limit_dependency("authenticated"))
+):
     """Get current user information."""
     return current_user
 
@@ -117,7 +137,8 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 @app.post("/api/v1/chat", response_model=ChatMessage)
 async def chat_completion(
     message: ChatMessage,
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
+    rate_limit: dict = Depends(rate_limit_dependency("chat"))
 ):
     """
     Chat completion endpoint.
@@ -138,7 +159,10 @@ async def chat_completion(
         )
 
 @app.get("/api/v1/chat/history", response_model=List[ChatMessage])
-async def get_chat_history(current_user: User = Depends(get_current_active_user)):
+async def get_chat_history(
+    current_user: User = Depends(get_current_active_user),
+    rate_limit: dict = Depends(rate_limit_dependency("authenticated"))
+):
     """Retrieve the conversation history."""
     try:
         return app.state.llm_manager.get_conversation_history()
@@ -150,7 +174,7 @@ async def get_chat_history(current_user: User = Depends(get_current_active_user)
         )
 
 @app.get("/health", status_code=status.HTTP_200_OK)
-async def health_check():
+async def health_check(rate_limit: dict = Depends(rate_limit_dependency())):
     """Health check endpoint to verify API status."""
     return {
         "status": "healthy",
@@ -160,7 +184,7 @@ async def health_check():
     }
 
 @app.get("/")
-async def root():
+async def root(rate_limit: dict = Depends(rate_limit_dependency())):
     """Root endpoint with API information."""
     return {
         "name": settings.APP_NAME,
