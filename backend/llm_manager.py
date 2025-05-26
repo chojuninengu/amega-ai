@@ -4,21 +4,21 @@ LLM Manager for AMEGA-AI
 This module handles the integration with language models using transformers and langchain.
 It provides a unified interface for text generation and chat completion.
 """
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Literal
 from datetime import datetime
 
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain.llms import HuggingFacePipeline
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 class ChatMessage(BaseModel):
     """Model for chat messages."""
-    role: str
-    content: str
-    timestamp: datetime = datetime.utcnow()
+    role: Literal["user", "assistant"] = Field(..., description="The role of the message sender")
+    content: str = Field(..., min_length=1, description="The content of the message")
+    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Message timestamp")
 
 class LLMManager:
     def __init__(self, model_name: str = "microsoft/DialoGPT-medium"):
