@@ -2,13 +2,9 @@
 Tests for authentication functionality.
 """
 import pytest
-from fastapi.testclient import TestClient
-from backend.app import app
 from backend.auth import fake_users_db
 
-client = TestClient(app)
-
-def test_register_user():
+def test_register_user(client):
     """Test user registration."""
     response = client.post(
         "/api/v1/auth/register",
@@ -22,7 +18,7 @@ def test_register_user():
     assert response.json()["username"] == "testuser"
     assert response.json()["email"] == "test@example.com"
 
-def test_register_duplicate_user():
+def test_register_duplicate_user(client):
     """Test registering a duplicate user."""
     # First registration
     client.post(
@@ -44,7 +40,7 @@ def test_register_duplicate_user():
     assert response.status_code == 400
     assert "already registered" in response.json()["detail"]
 
-def test_login():
+def test_login(client):
     """Test user login."""
     # Register a user first
     client.post(
@@ -67,7 +63,7 @@ def test_login():
     assert "access_token" in response.json()
     assert response.json()["token_type"] == "bearer"
 
-def test_protected_endpoint():
+def test_protected_endpoint(client):
     """Test accessing a protected endpoint."""
     # Register and login
     client.post(
@@ -96,12 +92,12 @@ def test_protected_endpoint():
     assert response.status_code == 200
     assert response.json()["username"] == "protected"
 
-def test_protected_endpoint_no_token():
+def test_protected_endpoint_no_token(client):
     """Test accessing a protected endpoint without a token."""
     response = client.get("/api/v1/users/me")
     assert response.status_code == 401
 
-def test_chat_endpoint_authentication():
+def test_chat_endpoint_authentication(client):
     """Test chat endpoint with authentication."""
     # Register and login
     client.post(
@@ -134,7 +130,7 @@ def test_chat_endpoint_authentication():
     assert response.status_code == 200
     assert "content" in response.json()
 
-def test_chat_endpoint_no_auth():
+def test_chat_endpoint_no_auth(client):
     """Test chat endpoint without authentication."""
     response = client.post(
         "/api/v1/chat",
