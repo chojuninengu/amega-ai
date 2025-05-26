@@ -146,13 +146,6 @@ venv.bak/
 # mkdocs documentation
 /site
 
-# Doc directory patterns
-/doc/
-/docs/
-doc/
-docs/
-*.doc/
-*.docs/
 
 # mypy
 .mypy_cache/
@@ -180,7 +173,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-./docs/
+# ./docs/
 .pre-commit-config.yaml
 
 # Logs and local data
@@ -218,7 +211,9 @@ docker-compose.override.yml
 *.local
 .env.local
 .env.*.local
+.env.*
 
 # System files
 .DS_Store
 Thumbs.db
+SECURITY.md

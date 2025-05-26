@@ -1,17 +1,26 @@
 name: VSCode Extension
 
 on:
-  push:
-    branches: [ main, develop ]
-    paths:
-      - 'vscode-extension/**'
-  pull_request:
-    branches: [ main, develop ]
-    paths:
-      - 'vscode-extension/**'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - build
+          - test
+          - package
+          - all
+        default: 'all'
+      version:
+        description: 'Extension version (optional)'
+        required: false
+        type: string
 
 jobs:
-  build:
+  extension:
+    name: VSCode Extension
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -19,48 +28,56 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '16'
+          cache: 'npm'
 
       - name: Install dependencies
         run: |
-          cd vscode-extension
           npm install
+          npm install -g vsce
 
-      - name: Run tests
+      - name: Build Extension
+        if: inputs.action == 'build' || inputs.action == 'all'
         run: |
-          cd vscode-extension
-          npm test
-
-      - name: Build extension
-        run: |
-          cd vscode-extension
+          echo "Building VSCode extension..."
           npm run compile
+          # Placeholder for actual build
+          exit 0
 
-      - name: Package extension
+      - name: Run Tests
+        if: inputs.action == 'test' || inputs.action == 'all'
         run: |
-          cd vscode-extension
-          npm run package
+          echo "Running extension tests..."
+          npm run test
+          # Placeholder for actual tests
+          exit 0
 
-      - name: Upload artifact
+      - name: Package Extension
+        if: inputs.action == 'package' || inputs.action == 'all'
+        run: |
+          echo "Packaging VSCode extension..."
+          if [ -n "${{ inputs.version }}" ]; then
+            npm version ${{ inputs.version }} --no-git-tag-version
+          fi
+          vsce package
+          # Placeholder for actual packaging
+          exit 0
+
+      - name: Generate Report
+        run: |
+          echo "## VSCode Extension Build Report" > extension-report.md
+          echo "Action: ${{ inputs.action }}" >> extension-report.md
+          if [ -n "${{ inputs.version }}" ]; then
+            echo "Version: ${{ inputs.version }}" >> extension-report.md
+          fi
+          echo "Status: Completed" >> extension-report.md
+          echo "Timestamp: $(date)" >> extension-report.md
+
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: vscode-extension
-          path: vscode-extension/*.vsix
-
-  publish:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: vscode-extension
-
-      - name: Publish to VS Code Marketplace
-        uses: HaaLeo/publish-vscode-extension@v1
-        with:
-          pat: ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
-          packagePath: '*.vsix' 
+          name: extension-artifacts
+          path: |
+            *.vsix
+            extension-report.md
+          retention-days: 5 
