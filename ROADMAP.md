@@ -21,10 +21,10 @@
 - [x] Add comprehensive test coverage for auth functionality
 
 ### Rate Limiting
-- [ ] Implement rate limiting in `backend/rate_limit.py`
-- [ ] Add request tracking and window management
-- [ ] Configure per-endpoint rate limits
-- [ ] Add test coverage for rate limiting
+- [x] Implement rate limiting in `backend/rate_limit.py`
+- [x] Add request tracking and window management
+- [x] Configure per-endpoint rate limits
+- [x] Add test coverage for rate limiting
 
 ## 📊 Phase 3: Data Persistence
 
@@ -83,8 +83,8 @@
 - [x] Initial testing
 
 ### Week 2: Security Layer
-- [ ] JWT authentication
-- [ ] Rate limiting
+- [x] JWT authentication
+- [x] Rate limiting
 - [ ] Endpoint protection
 
 ### Week 3: Data Layer
