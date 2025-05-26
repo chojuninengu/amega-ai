@@ -44,7 +44,7 @@ def test_user_model():
     assert user.email == "test@example.com"
     assert user.full_name == "Test User"
     assert user.disabled is False
-    
+
     # Test invalid email
     with pytest.raises(ValidationError):
         User(
@@ -65,7 +65,7 @@ def test_token_model():
     )
     assert token.access_token == "test_token"
     assert token.token_type == "bearer"
-    
+
     # Test missing required fields
     with pytest.raises(ValidationError):
         Token() 
