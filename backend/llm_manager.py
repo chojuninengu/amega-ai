@@ -9,7 +9,7 @@ from datetime import datetime
 
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-from langchain.llms import HuggingFacePipeline
+from langchain_community.llms import HuggingFacePipeline
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 from pydantic import BaseModel, EmailStr, Field
