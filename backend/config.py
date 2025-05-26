@@ -6,7 +6,7 @@ type-safe configuration objects.
 """
 from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field, PostgresDsn, field_validator
+from pydantic import Field, PostgresDsn, field_validator, RedisDsn
 
 class Settings(BaseSettings):
     """Application settings."""
@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     # Database settings
     DATABASE_URL: Optional[PostgresDsn] = None
     
+    # Redis settings
+    REDIS_URL: Optional[RedisDsn] = Field(default="redis://localhost:6379", description="Redis connection URL")
+    
     # Model settings
     MODEL_NAME: str = "microsoft/DialoGPT-medium"
     
@@ -30,6 +33,11 @@ class Settings(BaseSettings):
     SECRET_KEY: str = Field(default="your-secret-key-please-change-in-production")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    
+    # Rate limiting settings
+    RATE_LIMIT_DEFAULT_RPM: int = Field(default=100, description="Default requests per minute")
+    RATE_LIMIT_AUTH_RPM: int = Field(default=1000, description="Authenticated requests per minute")
+    RATE_LIMIT_CHAT_RPM: int = Field(default=50, description="Chat requests per minute")
     
     model_config = SettingsConfigDict(
         env_file=".env",
