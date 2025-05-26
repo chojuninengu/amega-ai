@@ -1,6 +1,30 @@
 # Welcome to Amega AI
 
-Amega AI is an advanced artificial intelligence platform designed to provide intelligent solutions for various use cases.
+Welcome to the Amega AI documentation. Here you'll find comprehensive guides and documentation to help you start working with Amega AI as quickly as possible.
+
+## Quick Links
+
+- [Installation Guide](guides/installation.md)
+- [API Documentation](api/index.md)
+- [Contributing Guide](development/contributing.md)
+- [Best Practices](guides/best-practices.md)
+
+## Documentation Structure
+
+- **API Documentation**
+  - [Authentication](api/auth.md)
+  - [Endpoints](api/endpoints.md)
+  - [Examples](api/examples.md)
+
+- **Development**
+  - [Contributing](development/contributing.md)
+  - [Code Style](development/code-style.md)
+  - [Testing](development/testing.md)
+  - [Architecture](development/architecture.md)
+
+- **Guides**
+  - [Installation](guides/installation.md)
+  - [Best Practices](guides/best-practices.md)
 
 ## Getting Started
 
