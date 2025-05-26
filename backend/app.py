@@ -60,8 +60,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize LLM Manager
-llm_manager = LLMManager(model_name=settings.MODEL_NAME)
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on startup."""
+    app.state.llm_manager = LLMManager(model_name=settings.MODEL_NAME)
 
 # Authentication endpoints
 @app.post("/api/v1/auth/register", response_model=User)
@@ -118,7 +120,7 @@ async def chat_completion(
     """
     try:
         logger.info(f"Received chat message from user {current_user.username}: {message.content}")
-        response = await llm_manager.chat(message)
+        response = await app.state.llm_manager.chat(message)
         logger.info(f"Generated response: {response.content}")
         return response
     except Exception as e:
@@ -132,7 +134,7 @@ async def chat_completion(
 async def get_chat_history(current_user: User = Depends(get_current_active_user)):
     """Retrieve the conversation history."""
     try:
-        return llm_manager.get_conversation_history()
+        return app.state.llm_manager.get_conversation_history()
     except Exception as e:
         logger.error(f"Error retrieving chat history: {str(e)}")
         raise HTTPException(
