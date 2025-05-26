@@ -6,7 +6,7 @@ type-safe configuration objects.
 """
 from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field, PostgresDsn, validator
+from pydantic import Field, PostgresDsn, field_validator
 
 class Settings(BaseSettings):
     """Application settings."""
@@ -37,7 +37,8 @@ class Settings(BaseSettings):
         env_prefix="AMEGA_"
     )
     
-    @validator("DATABASE_URL", pre=True)
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
     def validate_database_url(cls, v: Optional[str]) -> Optional[str]:
         """Validate database URL if provided."""
         if isinstance(v, str):
