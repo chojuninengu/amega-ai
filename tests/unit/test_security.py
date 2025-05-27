@@ -9,7 +9,7 @@ from backend.security import (
 )
 from backend.auth import (
     User, get_current_user, create_access_token,
-    ACCESS_TOKEN_EXPIRE_MINUTES
+    ACCESS_TOKEN_EXPIRE_MINUTES, fake_users_db, get_password_hash
 )
 
 # Test app setup
@@ -17,6 +17,37 @@ app = FastAPI()
 app.add_middleware(SecurityMiddleware)
 app.add_middleware(RBACMiddleware)
 app.add_middleware(RequestValidationMiddleware)
+
+# Create test users
+test_users = {
+    "test_admin": {
+        "username": "test_admin",
+        "email": "test_admin@example.com",
+        "full_name": "Test Admin",
+        "disabled": False,
+        "role": "admin",
+        "hashed_password": get_password_hash("test_admin")
+    },
+    "test_moderator": {
+        "username": "test_moderator",
+        "email": "test_moderator@example.com",
+        "full_name": "Test Moderator",
+        "disabled": False,
+        "role": "moderator",
+        "hashed_password": get_password_hash("test_moderator")
+    },
+    "test_user": {
+        "username": "test_user",
+        "email": "test_user@example.com",
+        "full_name": "Test User",
+        "disabled": False,
+        "role": "user",
+        "hashed_password": get_password_hash("test_user")
+    }
+}
+
+# Add test users to fake database
+fake_users_db.update(test_users)
 
 # Mock endpoints for testing
 @app.get("/test/public")
