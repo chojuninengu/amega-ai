@@ -12,6 +12,13 @@ from starlette.types import ASGIApp
 from .auth import get_current_user, User, oauth2_scheme
 from .config import settings
 
+# Role hierarchy definition
+ROLE_HIERARCHY = {
+    "admin": ["admin", "moderator", "user"],
+    "moderator": ["moderator", "user"],
+    "user": ["user"]
+}
+
 class SecurityMiddleware(BaseHTTPMiddleware):
     """Middleware for enforcing security headers and policies."""
     
@@ -59,11 +66,7 @@ class RBACMiddleware(BaseHTTPMiddleware):
     def __init__(self, app: ASGIApp):
         super().__init__(app)
         # Define role hierarchy
-        self.role_hierarchy = {
-            "admin": ["admin", "moderator", "user"],
-            "moderator": ["moderator", "user"],
-            "user": ["user"]
-        }
+        self.role_hierarchy = ROLE_HIERARCHY
         
         # Define endpoint permissions
         self.endpoint_permissions = {
@@ -126,9 +129,9 @@ class RBACMiddleware(BaseHTTPMiddleware):
     
     def _has_role_access(self, user_role: str, required_role: str) -> bool:
         """Check if user role has access to required role."""
-        if user_role not in self.role_hierarchy:
+        if user_role not in ROLE_HIERARCHY:
             return False
-        return required_role in self.role_hierarchy[user_role]
+        return required_role in ROLE_HIERARCHY[user_role]
 
 class RequestValidationMiddleware(BaseHTTPMiddleware):
     """Middleware for request validation and sanitization."""
@@ -167,20 +170,13 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
 def requires_roles(roles: List[str]) -> Callable:
     """Dependency for role-based access control."""
     async def role_checker(user: User = Depends(get_current_user)) -> User:
-        role_hierarchy = {
-            "admin": ["admin", "moderator", "user"],
-            "moderator": ["moderator", "user"],
-            "user": ["user"]
-        }
-        
-        # Check if user's role has access to any of the required roles
-        if user.role not in role_hierarchy:
+        if user.role not in ROLE_HIERARCHY:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Insufficient permissions"
             )
             
-        allowed_roles = role_hierarchy[user.role]
+        allowed_roles = ROLE_HIERARCHY[user.role]
         if not any(role in allowed_roles for role in roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
