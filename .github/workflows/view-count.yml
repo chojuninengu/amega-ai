@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "0 * * * *"  # every hour (adjust as needed)
+    - cron: "0 * * * *"  # every hour
 
 jobs:
   update_views:
