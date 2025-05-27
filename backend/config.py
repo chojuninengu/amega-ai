@@ -170,8 +170,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode='before')
     @classmethod
-    def validate_backend_configs(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate and transform backend configurations from environment variables."""
+    def validate_configs(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate and transform configurations from environment variables."""
         # Handle OpenAI config
         if values.get("ACTIVE_LLM_BACKEND") == "openai":
             openai_config = values.get("OPENAI_CONFIG", {})
@@ -182,7 +182,13 @@ class Settings(BaseSettings):
                     openai_config["api_key"] = openai_config.pop("API_KEY")
                 values["OPENAI_CONFIG"] = openai_config
 
-        # Handle other backend configs similarly if needed
+        # Handle LLM config
+        llm_config = values.get("LLM_CONFIG", {})
+        if isinstance(llm_config, dict):
+            if "TEMPERATURE" in llm_config:
+                llm_config["temperature"] = float(llm_config.pop("TEMPERATURE"))
+            values["LLM_CONFIG"] = llm_config
+
         return values
 
     @field_validator("DATABASE_URL", mode="before")
@@ -238,16 +244,16 @@ class Settings(BaseSettings):
             if "backends" in llm_data:
                 backends = llm_data["backends"]
                 if "huggingface" in backends:
-                    config_data["HUGGINGFACE_CONFIG"] = BackendConfig(**backends["huggingface"])
+                    config_data["HUGGINGFACE_CONFIG"] = backends["huggingface"]
                 if "openai" in backends:
-                    config_data["OPENAI_CONFIG"] = BackendConfig(**backends["openai"])
+                    config_data["OPENAI_CONFIG"] = backends["openai"]
                 if "anthropic" in backends:
-                    config_data["ANTHROPIC_CONFIG"] = BackendConfig(**backends["anthropic"])
+                    config_data["ANTHROPIC_CONFIG"] = backends["anthropic"]
                 if "ollama" in backends:
-                    config_data["OLLAMA_CONFIG"] = BackendConfig(**backends["ollama"])
+                    config_data["OLLAMA_CONFIG"] = backends["ollama"]
             
             if "generation" in llm_data:
-                config_data["LLM_CONFIG"] = LLMConfig(**llm_data["generation"])
+                config_data["LLM_CONFIG"] = llm_data["generation"]
         
         # Create settings instance with YAML data
         return cls(**config_data)
