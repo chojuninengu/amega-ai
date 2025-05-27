@@ -1,5 +1,7 @@
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Cameroon-Developer-Network/amega-ai?utm_source=oss&utm_medium=github&utm_campaign=amega-ai%2Famega-ai&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
-[![CI](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/ci.yml)
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Cameroon-Developer-Network/welcome-to-cdn?utm_source=oss&utm_medium=github&utm_campaign=Cameroon-Developer-Network%2Fwelcome-to-cdn&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+[![Code Quality](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/code-quality.yml/badge.svg)](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/code-quality.yml)
+[![Documentation](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/docs.yml/badge.svg)](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/docs.yml)
+[![Issue and PR Management](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/issue-pr.yml/badge.svg)](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/issue-pr.yml)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
 
