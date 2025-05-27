@@ -73,11 +73,11 @@ async def content_endpoint():
 # Test client
 client = TestClient(app)
 
-def create_test_token(username: str, role: str) -> str:
+def create_test_token(username: str) -> str:
     """Create a test JWT token."""
     expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     token = create_access_token(
-        data={"sub": username, "role": role},
+        data={"sub": username},
         expires_delta=expires
     )
     return token
@@ -107,12 +107,12 @@ def test_rbac_protected_endpoints_unauthorized():
     for endpoint in endpoints:
         response = client.get(endpoint)
         assert response.status_code == 401
-        assert "detail" in response.json()
+        assert response.json()["detail"] == "Authentication required"
 
 def test_rbac_user_access():
     """Test user role access."""
     # Create user token
-    token = create_test_token("test_user", "user")
+    token = create_test_token("test_user")
     headers = {"Authorization": f"Bearer {token}"}
     
     # User can access user endpoint
@@ -131,7 +131,7 @@ def test_rbac_user_access():
 def test_rbac_moderator_access():
     """Test moderator role access."""
     # Create moderator token
-    token = create_test_token("test_moderator", "moderator")
+    token = create_test_token("test_moderator")
     headers = {"Authorization": f"Bearer {token}"}
     
     # Moderator can access user endpoint
@@ -151,7 +151,7 @@ def test_rbac_moderator_access():
 def test_rbac_admin_access():
     """Test admin role access."""
     # Create admin token
-    token = create_test_token("test_admin", "admin")
+    token = create_test_token("test_admin")
     headers = {"Authorization": f"Bearer {token}"}
     
     # Admin can access all endpoints
@@ -171,6 +171,7 @@ def test_request_validation():
     large_content = "x" * (10 * 1024 * 1024 + 1)  # Exceeds 10MB
     response = client.post("/test/content", json={"content": large_content})
     assert response.status_code == 413
+    assert response.json()["detail"] == "Request too large"
     
     # Test content type validation
     response = client.post(
@@ -179,6 +180,7 @@ def test_request_validation():
         data="invalid"
     )
     assert response.status_code == 415
+    assert response.json()["detail"] == "Unsupported media type"
     
     # Test valid request
     response = client.post("/test/content", json={"content": "valid"})
