@@ -4,8 +4,6 @@
 
 
 
-![Repo Views](https://img.shields.io/badge/dynamic/json?color=blue&label=Repo%20Views&query=%24&url=https://amega-ai-repo-views-default-rtdb.firebaseio.com/repo_views.json)
-
 
 [![Documentation](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/docs.yml/badge.svg)](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/docs.yml)
 [![Issue and PR Management](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/issue-pr.yml/badge.svg)](https://github.com/Cameroon-Developer-Network/amega-ai/actions/workflows/issue-pr.yml)
