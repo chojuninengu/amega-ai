@@ -78,7 +78,7 @@ jobs:
           echo "Timestamp: $(date)" >> deploy-report.md
 
       - name: Upload Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: deployment-report
           path: deploy-report.md
