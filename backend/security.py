@@ -73,6 +73,17 @@ class RBACMiddleware(BaseHTTPMiddleware):
             "DELETE": "delete",
             "PATCH": "write"
         }
+        
+        # Define public endpoints
+        self.public_paths = {
+            "/test/public",
+            "/api/v1/auth/token",
+            "/api/v1/auth/register",
+            "/docs",
+            "/redoc",
+            "/openapi.json",
+            "/health"
+        }
     
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint
@@ -82,12 +93,27 @@ class RBACMiddleware(BaseHTTPMiddleware):
         if self._is_public_endpoint(request.url.path):
             return await call_next(request)
         
-        # Get user from request state (set by auth middleware)
-        user = getattr(request.state, "user", None)
-        if not user:
+        # Get authorization header
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Authentication required"
+                detail="Authentication required",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+        
+        # Get token
+        token = auth_header.split(" ")[1]
+        
+        # Get user from token
+        try:
+            user = await get_current_user(token)
+            request.state.user = user
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"}
             )
         
         # Check if user has required permission
@@ -102,14 +128,7 @@ class RBACMiddleware(BaseHTTPMiddleware):
     
     def _is_public_endpoint(self, path: str) -> bool:
         """Check if endpoint is public."""
-        public_paths = [
-            "/api/v1/auth/token",
-            "/api/v1/auth/register",
-            "/docs",
-            "/redoc",
-            "/openapi.json"
-        ]
-        return any(path.startswith(p) for p in public_paths)
+        return any(path.startswith(p) for p in self.public_paths)
     
     def _has_permission(self, role: str, required_permission: str) -> bool:
         """Check if role has required permission."""
@@ -126,6 +145,10 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
         self, request: Request, call_next: RequestResponseEndpoint
     ) -> Response:
         """Validate and sanitize requests."""
+        # Skip validation for GET requests
+        if request.method == "GET":
+            return await call_next(request)
+        
         # Check content length
         content_length = request.headers.get("content-length")
         if content_length and int(content_length) > self.max_content_length:
