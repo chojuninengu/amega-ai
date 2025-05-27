@@ -1,61 +1,28 @@
-# Getting Started with Amega AI
+# Getting Started
 
-This guide will help you get up and running with Amega AI quickly.
+This guide will help you get started with Amega AI.
 
 ## Prerequisites
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - pip package manager
-- Git (for version control)
-- Virtual environment (recommended)
+- Git
 
 ## Installation
 
-1. **Clone the Repository**
+1. Clone the repository:
+```bash
+git clone https://github.com/Cameroon-Developer-Network/amega-ai.git
+cd amega-ai
+```
 
-   ```bash
-   git clone https://github.com/yourusername/amega-ai.git
-   cd amega-ai
-   ```
-
-2. **Create Virtual Environment**
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-   ```
-
-3. **Install Dependencies**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Quick Start Example
-
-Here's a simple example to get you started with model training:
-
-```python
-from amega_ai import Model, Dataset
-
-# Load example dataset
-dataset = Dataset.load_example("sentiment")
-
-# Create a model
-model = Model.create("sentiment-classifier")
-
-# Train the model
-model.train(dataset, epochs=5)
-
-# Make predictions
-text = "This product exceeded my expectations!"
-prediction = model.predict(text)
-print(f"Sentiment: {prediction}")
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
 ## Next Steps
 
-1. Check out our [Installation Guide](installation.md) for detailed setup instructions
-2. Learn about [Configuration](configuration.md) options
-3. Explore the [API Documentation](../api.md)
-4. Join our [Community](https://discord.gg/amega-ai) for support 
+- [Configuration Guide](configuration.md)
+- [Best Practices](best-practices.md)
+- [API Documentation](../api/index.md) 
