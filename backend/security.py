@@ -58,20 +58,18 @@ class RBACMiddleware(BaseHTTPMiddleware):
     
     def __init__(self, app: ASGIApp):
         super().__init__(app)
-        # Define role-based permissions
-        self.role_permissions = {
-            "admin": ["read", "write", "delete", "manage"],
-            "moderator": ["read", "write"],
-            "user": ["read"]
+        # Define role hierarchy
+        self.role_hierarchy = {
+            "admin": ["admin", "moderator", "user"],
+            "moderator": ["moderator", "user"],
+            "user": ["user"]
         }
         
         # Define endpoint permissions
         self.endpoint_permissions = {
-            "GET": "read",
-            "POST": "write",
-            "PUT": "write",
-            "DELETE": "delete",
-            "PATCH": "write"
+            "/test/admin": "admin",
+            "/test/moderator": "moderator",
+            "/test/user": "user"
         }
         
         # Define public endpoints
@@ -109,16 +107,16 @@ class RBACMiddleware(BaseHTTPMiddleware):
         try:
             user = await get_current_user(token)
             request.state.user = user
-        except Exception:
+        except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
                 headers={"WWW-Authenticate": "Bearer"}
             )
         
-        # Check if user has required permission
-        required_permission = self.endpoint_permissions.get(request.method, "read")
-        if not self._has_permission(user.role, required_permission):
+        # Check if user has required role for the endpoint
+        required_role = self.endpoint_permissions.get(request.url.path)
+        if required_role and not self._has_role_access(user.role, required_role):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Insufficient permissions"
@@ -130,9 +128,10 @@ class RBACMiddleware(BaseHTTPMiddleware):
         """Check if endpoint is public."""
         return any(path.startswith(p) for p in self.public_paths)
     
-    def _has_permission(self, role: str, required_permission: str) -> bool:
-        """Check if role has required permission."""
-        return required_permission in self.role_permissions.get(role, [])
+    def _has_role_access(self, user_role: str, required_role: str) -> bool:
+        """Check if user role has access to required role."""
+        allowed_roles = self.role_hierarchy.get(user_role, [])
+        return required_role in allowed_roles
 
 class RequestValidationMiddleware(BaseHTTPMiddleware):
     """Middleware for request validation and sanitization."""
