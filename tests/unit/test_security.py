@@ -2,11 +2,15 @@
 import pytest
 from fastapi import FastAPI, Depends
 from fastapi.testclient import TestClient
+from datetime import timedelta
 from backend.security import (
     SecurityMiddleware, RBACMiddleware, RequestValidationMiddleware,
     requires_admin, requires_moderator, requires_user
 )
-from backend.auth import User, get_current_user
+from backend.auth import (
+    User, get_current_user, create_access_token,
+    ACCESS_TOKEN_EXPIRE_MINUTES
+)
 
 # Test app setup
 app = FastAPI()
@@ -38,6 +42,15 @@ async def content_endpoint():
 # Test client
 client = TestClient(app)
 
+def create_test_token(username: str, role: str) -> str:
+    """Create a test JWT token."""
+    expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    token = create_access_token(
+        data={"sub": username, "role": role},
+        expires_delta=expires
+    )
+    return token
+
 def test_security_headers():
     """Test security headers are added to responses."""
     response = client.get("/test/public")
@@ -67,60 +80,48 @@ def test_rbac_protected_endpoints_unauthorized():
 
 def test_rbac_user_access():
     """Test user role access."""
-    # Mock user token
-    app.dependency_overrides[get_current_user] = lambda: User(
-        username="test_user",
-        role="user"
-    )
+    # Create user token
+    token = create_test_token("test_user", "user")
+    headers = {"Authorization": f"Bearer {token}"}
     
     # User can access user endpoint
-    response = client.get("/test/user")
+    response = client.get("/test/user", headers=headers)
     assert response.status_code == 200
     assert response.json() == {"message": "user", "role": "user"}
     
     # User cannot access moderator endpoint
-    response = client.get("/test/moderator")
+    response = client.get("/test/moderator", headers=headers)
     assert response.status_code == 403
     
     # User cannot access admin endpoint
-    response = client.get("/test/admin")
+    response = client.get("/test/admin", headers=headers)
     assert response.status_code == 403
-    
-    # Clean up
-    app.dependency_overrides.clear()
 
 def test_rbac_moderator_access():
     """Test moderator role access."""
-    # Mock moderator token
-    app.dependency_overrides[get_current_user] = lambda: User(
-        username="test_moderator",
-        role="moderator"
-    )
+    # Create moderator token
+    token = create_test_token("test_moderator", "moderator")
+    headers = {"Authorization": f"Bearer {token}"}
     
     # Moderator can access user endpoint
-    response = client.get("/test/user")
+    response = client.get("/test/user", headers=headers)
     assert response.status_code == 200
     assert response.json() == {"message": "user", "role": "moderator"}
     
     # Moderator can access moderator endpoint
-    response = client.get("/test/moderator")
+    response = client.get("/test/moderator", headers=headers)
     assert response.status_code == 200
     assert response.json() == {"message": "moderator", "role": "moderator"}
     
     # Moderator cannot access admin endpoint
-    response = client.get("/test/admin")
+    response = client.get("/test/admin", headers=headers)
     assert response.status_code == 403
-    
-    # Clean up
-    app.dependency_overrides.clear()
 
 def test_rbac_admin_access():
     """Test admin role access."""
-    # Mock admin token
-    app.dependency_overrides[get_current_user] = lambda: User(
-        username="test_admin",
-        role="admin"
-    )
+    # Create admin token
+    token = create_test_token("test_admin", "admin")
+    headers = {"Authorization": f"Bearer {token}"}
     
     # Admin can access all endpoints
     endpoints = [
@@ -129,12 +130,9 @@ def test_rbac_admin_access():
         ("/test/admin", "admin")
     ]
     for endpoint, message in endpoints:
-        response = client.get(endpoint)
+        response = client.get(endpoint, headers=headers)
         assert response.status_code == 200
         assert response.json() == {"message": message, "role": "admin"}
-    
-    # Clean up
-    app.dependency_overrides.clear()
 
 def test_request_validation():
     """Test request validation middleware."""
