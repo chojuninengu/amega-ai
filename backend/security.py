@@ -167,7 +167,21 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
 def requires_roles(roles: List[str]) -> Callable:
     """Dependency for role-based access control."""
     async def role_checker(user: User = Depends(get_current_user)) -> User:
-        if user.role not in roles:
+        role_hierarchy = {
+            "admin": ["admin", "moderator", "user"],
+            "moderator": ["moderator", "user"],
+            "user": ["user"]
+        }
+        
+        # Check if user's role has access to any of the required roles
+        if user.role not in role_hierarchy:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions"
+            )
+            
+        allowed_roles = role_hierarchy[user.role]
+        if not any(role in allowed_roles for role in roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Insufficient permissions"
@@ -177,5 +191,5 @@ def requires_roles(roles: List[str]) -> Callable:
 
 # Convenience dependencies
 requires_admin = requires_roles(["admin"])
-requires_moderator = requires_roles(["admin", "moderator"])
-requires_user = requires_roles(["admin", "moderator", "user"]) 
+requires_moderator = requires_roles(["moderator"])
+requires_user = requires_roles(["user"]) 
