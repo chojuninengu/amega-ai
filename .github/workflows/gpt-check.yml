@@ -23,3 +23,4 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           MODEL: "gpt-3.5-turbo"
           LANGUAGE: "en"
+          review_comment_lgtm: false  # Don't comment if everything looks good
