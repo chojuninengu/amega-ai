@@ -1,6 +1,16 @@
 # API Documentation
 
-Welcome to the Amega AI API documentation. This guide will help you understand how to interact with our API.
+Welcome to the Amega AI API documentation. This section provides comprehensive information about our API endpoints, authentication, and usage examples.
+
+## Overview
+
+The Amega AI API is organized around REST. Our API accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes and authentication.
+
+## Getting Started
+
+1. [Authentication](auth.md)
+2. [API Endpoints](endpoints.md)
+3. [Usage Examples](examples.md)
 
 ## Quick Start
 
@@ -32,10 +42,6 @@ If you encounter any issues or have questions:
 ## Authentication
 
 All API requests require authentication. See our [Authentication Guide](auth.md) for details on obtaining and using API keys.
-
-## Overview
-
-The Amega AI API is organized around REST principles. It accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
 
 ## Base URL
 
