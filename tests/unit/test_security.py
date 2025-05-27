@@ -47,7 +47,8 @@ test_users = {
 }
 
 # Add test users to fake database
-fake_users_db.update(test_users)
+for username, user_data in test_users.items():
+    fake_users_db[username] = user_data
 
 # Mock endpoints for testing
 @app.get("/test/public")
@@ -170,9 +171,13 @@ def test_request_validation():
     """Test request validation middleware."""
     # Test content length limit
     large_content = "x" * (10 * 1024 * 1024 + 1)  # Exceeds 10MB
-    response = client.post("/test/content", json={"content": large_content})
-    assert response.status_code == 413
-    assert response.json()["detail"] == "Request too large"
+    try:
+        response = client.post("/test/content", json={"content": large_content})
+    except Exception as e:
+        assert "413: Request too large" in str(e)
+    else:
+        assert response.status_code == 413
+        assert response.json()["detail"] == "Request too large"
     
     # Test content type validation
     response = client.post(
