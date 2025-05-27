@@ -2,12 +2,17 @@ version = 1
 
 [[analyzers]]
 name = "python"
+enabled = true
 
   [analyzers.meta]
   runtime_version = "3.x.x"
 
 [[analyzers]]
 name = "shell"
+enabled = true
+
+  [analyzers.meta]
+  dialect = "bash"
 
 [[analyzers]]
 name = "test-coverage"
