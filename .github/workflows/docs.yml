@@ -46,7 +46,7 @@ jobs:
         run: |
           if [ ! -f "mkdocs.yml" ]; then
             echo "Creating default mkdocs.yml"
-            cat > mkdocs.yml << EOF
+            cat > mkdocs.yml << 'EOF'
             site_name: Amega AI
             theme:
               name: material
