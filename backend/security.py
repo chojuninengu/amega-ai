@@ -107,22 +107,24 @@ class RBACMiddleware(BaseHTTPMiddleware):
         try:
             user = await get_current_user(token)
             request.state.user = user
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication credentials",
-                headers={"WWW-Authenticate": "Bearer"}
-            )
-        
-        # Check if user has required role for the endpoint
-        required_role = self.endpoint_permissions.get(request.url.path)
-        if required_role and not self._has_role_access(user.role, required_role):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Insufficient permissions"
-            )
-        
-        return await call_next(request)
+            
+            # Check if user has required role for the endpoint
+            required_role = self.endpoint_permissions.get(request.url.path)
+            if required_role and not self._has_role_access(user.role, required_role):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Insufficient permissions"
+                )
+            
+            return await call_next(request)
+        except HTTPException as e:
+            if e.status_code == status.HTTP_401_UNAUTHORIZED:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid authentication credentials",
+                    headers={"WWW-Authenticate": "Bearer"}
+                )
+            raise e
     
     def _is_public_endpoint(self, path: str) -> bool:
         """Check if endpoint is public."""
