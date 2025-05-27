@@ -154,6 +154,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Create an issue for bug reports or feature requests
 - Join our [Discord community](https://discord.gg/your-server) for discussions
-- Email us at support@amega-ai.com for other inquiries
+- Email us at camdev237@gmail.com for other inquiries
 
 
