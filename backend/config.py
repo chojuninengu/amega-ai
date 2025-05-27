@@ -104,28 +104,28 @@ class Settings(BaseSettings):
     
     # LLM Backend Configurations
     HUGGINGFACE_CONFIG: BackendConfig = Field(
-        default=BackendConfig(
+        default_factory=lambda: BackendConfig(
             model_name="microsoft/DialoGPT-medium"
         ),
         description="HuggingFace models configuration"
     )
     
     OPENAI_CONFIG: BackendConfig = Field(
-        default=BackendConfig(
+        default_factory=lambda: BackendConfig(
             model_name="gpt-3.5-turbo"
         ),
         description="OpenAI models configuration"
     )
     
     ANTHROPIC_CONFIG: BackendConfig = Field(
-        default=BackendConfig(
+        default_factory=lambda: BackendConfig(
             model_name="claude-3-opus-20240229"
         ),
         description="Anthropic models configuration"
     )
     
     OLLAMA_CONFIG: BackendConfig = Field(
-        default=BackendConfig(
+        default_factory=lambda: BackendConfig(
             model_name="llama2",
             api_base="http://localhost:11434"
         ),
@@ -134,7 +134,7 @@ class Settings(BaseSettings):
     
     # LLM Generation Parameters
     LLM_CONFIG: LLMConfig = Field(
-        default=LLMConfig(),
+        default_factory=LLMConfig,
         description="LLM generation parameters"
     )
     
@@ -163,7 +163,9 @@ class Settings(BaseSettings):
         env_file=".env",
         case_sensitive=True,
         env_prefix="AMEGA_",
-        env_nested_delimiter="__"
+        env_nested_delimiter="__",
+        env_file_encoding="utf-8",
+        validate_default=True
     )
 
     @field_validator("DATABASE_URL", mode="before")
