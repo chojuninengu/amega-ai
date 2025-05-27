@@ -55,6 +55,22 @@ fake_users_db = {
         "disabled": False,
         "role": "admin",
         "hashed_password": pwd_context.hash("admin")
+    },
+    "moderator": {
+        "username": "moderator",
+        "email": "moderator@example.com",
+        "full_name": "Moderator User",
+        "disabled": False,
+        "role": "moderator",
+        "hashed_password": pwd_context.hash("moderator")
+    },
+    "user": {
+        "username": "user",
+        "email": "user@example.com",
+        "full_name": "Regular User",
+        "disabled": False,
+        "role": "user",
+        "hashed_password": pwd_context.hash("user")
     }
 }
 
@@ -103,10 +119,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
-        role: str = payload.get("role", "user")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username, role=role)
+        token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
     
