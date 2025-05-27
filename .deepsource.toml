@@ -2,9 +2,70 @@ version = 1
 
 [[analyzers]]
 name = "python"
+enabled = true
 
   [analyzers.meta]
   runtime_version = "3.x.x"
+  max_line_length = 88  # Matches black formatter
+  type_checker = "mypy"
+
+  # Enable all available rules for comprehensive analysis
+  enable = ["all"]
+
+  # Dependencies that should be analyzed
+  dependencies_modules = ["requirements.txt", "requirements-dev.txt"]
+
+  # Paths to exclude from analysis
+  exclude_patterns = [
+    "tests/**",
+    "docs/**",
+    "**/migrations/**",
+    "**/__pycache__/**"
+  ]
 
 [[analyzers]]
 name = "shell"
+enabled = true
+
+  [analyzers.meta]
+  dialect = "bash"
+  include = ["*.sh", "*.bash", ".bashrc", ".bash_profile"]
+  shell_variables = true
+  
+[[analyzers]]
+name = "test-coverage"
+enabled = true
+
+  [analyzers.meta]
+  coverage_tool = "pytest"
+  coverage_report_path = "coverage.xml"
+  minimum_coverage = 80
+
+[[analyzers]]
+name = "docker"
+enabled = true
+
+  [analyzers.meta]
+  dockerfile_paths = [
+    "Dockerfile",
+    "docker/Dockerfile.*"
+  ]
+
+[[transformers]]
+name = "black"
+enabled = true
+
+[[transformers]]
+name = "isort"
+enabled = true
+
+[exclude]
+paths = [
+  "*.pyc",
+  ".git/**",
+  ".venv/**",
+  "venv/**",
+  "build/**",
+  "dist/**",
+  "*.egg-info/**"
+]
