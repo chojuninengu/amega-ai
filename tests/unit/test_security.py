@@ -18,37 +18,49 @@ app.add_middleware(SecurityMiddleware)
 app.add_middleware(RBACMiddleware)
 app.add_middleware(RequestValidationMiddleware)
 
-# Create test users
-test_users = {
-    "test_admin": {
-        "username": "test_admin",
-        "email": "test_admin@example.com",
-        "full_name": "Test Admin",
-        "disabled": False,
-        "role": "admin",
-        "hashed_password": get_password_hash("test_admin")
-    },
-    "test_moderator": {
-        "username": "test_moderator",
-        "email": "test_moderator@example.com",
-        "full_name": "Test Moderator",
-        "disabled": False,
-        "role": "moderator",
-        "hashed_password": get_password_hash("test_moderator")
-    },
-    "test_user": {
-        "username": "test_user",
-        "email": "test_user@example.com",
-        "full_name": "Test User",
-        "disabled": False,
-        "role": "user",
-        "hashed_password": get_password_hash("test_user")
+@pytest.fixture(autouse=True)
+def setup_test_users():
+    """Setup test users before each test."""
+    # Create test users
+    test_users = {
+        "test_admin": {
+            "username": "test_admin",
+            "email": "test_admin@example.com",
+            "full_name": "Test Admin",
+            "disabled": False,
+            "role": "admin",
+            "hashed_password": get_password_hash("test_admin")
+        },
+        "test_moderator": {
+            "username": "test_moderator",
+            "email": "test_moderator@example.com",
+            "full_name": "Test Moderator",
+            "disabled": False,
+            "role": "moderator",
+            "hashed_password": get_password_hash("test_moderator")
+        },
+        "test_user": {
+            "username": "test_user",
+            "email": "test_user@example.com",
+            "full_name": "Test User",
+            "disabled": False,
+            "role": "user",
+            "hashed_password": get_password_hash("test_user")
+        }
     }
-}
-
-# Add test users to fake database
-for username, user_data in test_users.items():
-    fake_users_db[username] = user_data.copy()  # Use copy to avoid reference issues
+    
+    # Clear existing test users
+    for username in ["test_admin", "test_moderator", "test_user"]:
+        fake_users_db.pop(username, None)
+    
+    # Add test users to fake database
+    fake_users_db.update(test_users)
+    
+    yield
+    
+    # Cleanup after test
+    for username in ["test_admin", "test_moderator", "test_user"]:
+        fake_users_db.pop(username, None)
 
 # Mock endpoints for testing
 @app.get("/test/public")
@@ -172,10 +184,20 @@ def test_rbac_admin_access():
 
 def test_request_validation():
     """Test request validation middleware."""
+    # Get admin token for authentication
+    token = create_test_token("test_admin")
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+    
     # Test content length limit
     large_content = "x" * (10 * 1024 * 1024 + 1)  # Exceeds 10MB
     try:
-        response = client.post("/test/content", json={"content": large_content})
+        response = client.post(
+            "/test/content",
+            json={"content": large_content},
+            headers=headers
+        )
         assert response.status_code == 413
         assert response.json()["detail"] == "Request too large"
     except Exception as e:
@@ -185,8 +207,8 @@ def test_request_validation():
     try:
         response = client.post(
             "/test/content",
-            headers={"Content-Type": "text/plain"},
-            content="invalid"  # Use content instead of data
+            headers={"Content-Type": "text/plain", **headers},
+            content="invalid"
         )
         assert response.status_code == 415
         assert response.json()["detail"] == "Unsupported media type"
@@ -194,5 +216,9 @@ def test_request_validation():
         assert "415: Unsupported media type" in str(e)
     
     # Test valid request
-    response = client.post("/test/content", json={"content": "valid"})
+    response = client.post(
+        "/test/content",
+        json={"content": "valid"},
+        headers=headers
+    )
     assert response.status_code == 200 
