@@ -12,6 +12,19 @@ from starlette.types import ASGIApp
 from .auth import get_current_user, User, oauth2_scheme
 from .config import settings
 
+# Role hierarchy definition
+ROLE_HIERARCHY = {
+    "admin": ["admin", "moderator", "user"],
+    "moderator": ["moderator", "user"],
+    "user": ["user"]
+}
+
+def check_role_access(user_role: str, required_role: str) -> bool:
+    """Check if user role has access to required role."""
+    if user_role not in ROLE_HIERARCHY:
+        return False
+    return required_role in ROLE_HIERARCHY[user_role]
+
 class SecurityMiddleware(BaseHTTPMiddleware):
     """Middleware for enforcing security headers and policies."""
     
@@ -58,13 +71,6 @@ class RBACMiddleware(BaseHTTPMiddleware):
     
     def __init__(self, app: ASGIApp):
         super().__init__(app)
-        # Define role hierarchy
-        self.role_hierarchy = {
-            "admin": ["admin", "moderator", "user"],
-            "moderator": ["moderator", "user"],
-            "user": ["user"]
-        }
-        
         # Define endpoint permissions
         self.endpoint_permissions = {
             "/test/admin": "admin",
@@ -83,9 +89,11 @@ class RBACMiddleware(BaseHTTPMiddleware):
             "/health"
         }
     
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    def _is_public_endpoint(self, path: str) -> bool:
+        """Check if endpoint is public."""
+        return any(path.startswith(p) for p in self.public_paths)
+    
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         """Check role-based permissions."""
         # Skip RBAC for public endpoints
         if self._is_public_endpoint(request.url.path):
@@ -110,7 +118,7 @@ class RBACMiddleware(BaseHTTPMiddleware):
             
             # Check if user has required role for the endpoint
             required_role = self.endpoint_permissions.get(request.url.path)
-            if required_role and not self._has_role_access(user.role, required_role):
+            if required_role and not check_role_access(user.role, required_role):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Insufficient permissions"
@@ -119,16 +127,22 @@ class RBACMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
         except HTTPException as e:
             raise e
-    
-    def _is_public_endpoint(self, path: str) -> bool:
-        """Check if endpoint is public."""
-        return any(path.startswith(p) for p in self.public_paths)
-    
-    def _has_role_access(self, user_role: str, required_role: str) -> bool:
-        """Check if user role has access to required role."""
-        if user_role not in self.role_hierarchy:
-            return False
-        return required_role in self.role_hierarchy[user_role]
+
+def requires_roles(roles: List[str]) -> Callable:
+    """Dependency for role-based access control."""
+    async def role_checker(user: User = Depends(get_current_user)) -> User:
+        if not any(check_role_access(user.role, role) for role in roles):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions"
+            )
+        return user
+    return role_checker
+
+# Convenience dependencies
+requires_admin = requires_roles(["admin"])
+requires_moderator = requires_roles(["moderator"])
+requires_user = requires_roles(["user"])
 
 class RequestValidationMiddleware(BaseHTTPMiddleware):
     """Middleware for request validation and sanitization."""
@@ -162,34 +176,4 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
                     detail="Unsupported media type"
                 )
         
-        return await call_next(request)
-
-def requires_roles(roles: List[str]) -> Callable:
-    """Dependency for role-based access control."""
-    async def role_checker(user: User = Depends(get_current_user)) -> User:
-        role_hierarchy = {
-            "admin": ["admin", "moderator", "user"],
-            "moderator": ["moderator", "user"],
-            "user": ["user"]
-        }
-        
-        # Check if user's role has access to any of the required roles
-        if user.role not in role_hierarchy:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Insufficient permissions"
-            )
-            
-        allowed_roles = role_hierarchy[user.role]
-        if not any(role in allowed_roles for role in roles):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Insufficient permissions"
-            )
-        return user
-    return role_checker
-
-# Convenience dependencies
-requires_admin = requires_roles(["admin"])
-requires_moderator = requires_roles(["moderator"])
-requires_user = requires_roles(["user"]) 
+        return await call_next(request) 
