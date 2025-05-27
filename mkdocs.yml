@@ -1,7 +1,7 @@
-des21site_name: Amega AI
-site_url: https://github.com/Cameroon-Developer-Network/amega-ai.git
-repo_url: https://github.com/Cameroon-Developer-Network/amega-ai.git
-repo_name: amega-ai/
+site_name: Amega AI
+site_url: https://cameroon-developer-network.github.io/amega-ai/
+repo_url: https://github.com/Cameroon-Developer-Network/amega-ai
+repo_name: Cameroon-Developer-Network/amega-ai
 edit_uri: edit/main/docs/
 
 docs_dir: docs
@@ -32,7 +32,6 @@ theme:
     - content.code.annotate
     - content.tabs.link
     - content.tooltips
-    - content.tabs.link
     - header.autohide
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -75,7 +74,8 @@ nav:
 
 plugins:
   - search
-  - tags
+  - tags:
+      enabled: true
 
 markdown_extensions:
   - abbr
@@ -126,7 +126,7 @@ extra:
       - manage
   social:
     - icon: fontawesome/brands/github
-      link:https://github.com/Cameroon-Developer-Network/amega-ai.git
+      link: https://github.com/Cameroon-Developer-Network/amega-ai
     - icon: fontawesome/brands/discord
       link: https://discord.gg/amega-ai-community
 
