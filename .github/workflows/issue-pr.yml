@@ -1,3 +1,4 @@
+
 name: Issue and PR Management
 
 on:
@@ -48,7 +49,6 @@ jobs:
             } catch (e) {
               console.log('Error processing issue:', e.message);
             }
-
       - name: Check PR Title
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
@@ -74,7 +74,6 @@ jobs:
             } catch (e) {
               console.log('Error checking PR title:', e.message);
             }
-
       - name: Generate Report
         if: always()
         run: |
@@ -89,10 +88,9 @@ jobs:
             echo "Title: ${{ github.event.pull_request.title }}" >> triage-report.md
           fi
           echo "Status: Completed" >> triage-report.md
-
       - name: Upload Report
         if: always()
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4
         with:
           name: triage-report
           path: triage-report.md
