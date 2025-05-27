@@ -1,0 +1,29 @@
+name: Repo View Tracker
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 * * * *"  # every hour (adjust as needed)
+
+jobs:
+  update_views:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install firebase-admin
+        run: pip install firebase-admin
+
+      - name: Update Firebase view count
+        run: |
+          echo "$FIREBASE_KEY" > key.json
+          python3 update_views.py
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
