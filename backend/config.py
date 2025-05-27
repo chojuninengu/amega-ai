@@ -5,6 +5,8 @@ This module handles configuration loading from environment variables and provide
 type-safe configuration objects.
 """
 from typing import List, Optional, Literal, Dict, Any
+from pathlib import Path
+import yaml
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, PostgresDsn, field_validator, RedisDsn, BaseModel
 
@@ -160,7 +162,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True,
-        env_prefix="AMEGA_"
+        env_prefix="AMEGA_",
+        env_nested_delimiter="__"
     )
 
     @field_validator("DATABASE_URL", mode="before")
@@ -185,6 +188,50 @@ class Settings(BaseSettings):
             "ollama": self.OLLAMA_CONFIG
         }
         return backend_configs[self.ACTIVE_LLM_BACKEND]
+    
+    @classmethod
+    def from_yaml(cls, yaml_file: str | Path) -> "Settings":
+        """Load settings from a YAML file."""
+        yaml_file = Path(yaml_file)
+        if not yaml_file.exists():
+            raise FileNotFoundError(f"YAML configuration file not found: {yaml_file}")
+        
+        with yaml_file.open("r") as f:
+            yaml_data = yaml.safe_load(f)
+        
+        # Transform YAML structure to match our settings format
+        config_data = {}
+        
+        # Handle app settings
+        if "app" in yaml_data:
+            config_data.update({
+                "APP_NAME": yaml_data["app"].get("name", cls.model_fields["APP_NAME"].default),
+                "APP_VERSION": yaml_data["app"].get("version", cls.model_fields["APP_VERSION"].default),
+                "DEBUG": yaml_data["app"].get("debug", cls.model_fields["DEBUG"].default)
+            })
+        
+        # Handle LLM settings
+        if "llm" in yaml_data:
+            llm_data = yaml_data["llm"]
+            if "active_backend" in llm_data:
+                config_data["ACTIVE_LLM_BACKEND"] = llm_data["active_backend"]
+            
+            if "backends" in llm_data:
+                backends = llm_data["backends"]
+                if "huggingface" in backends:
+                    config_data["HUGGINGFACE_CONFIG"] = BackendConfig(**backends["huggingface"])
+                if "openai" in backends:
+                    config_data["OPENAI_CONFIG"] = BackendConfig(**backends["openai"])
+                if "anthropic" in backends:
+                    config_data["ANTHROPIC_CONFIG"] = BackendConfig(**backends["anthropic"])
+                if "ollama" in backends:
+                    config_data["OLLAMA_CONFIG"] = BackendConfig(**backends["ollama"])
+            
+            if "generation" in llm_data:
+                config_data["LLM_CONFIG"] = LLMConfig(**llm_data["generation"])
+        
+        # Create settings instance with YAML data
+        return cls(**config_data)
 
 # Global settings instance
 settings = Settings()
