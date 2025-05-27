@@ -111,10 +111,7 @@ pytest tests/e2e/
 
 ## 📚 Documentation
 
-- [API Documentation](docs/api/README.md)
-- [User Guide](docs/guides/user-guide.md)
-- [Developer Guide](docs/guides/developer-guide.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
+- [API Documentation](https://cameroon-developer-network.github.io/amega-ai/)
 
 ## 🔄 Development Workflow
 
