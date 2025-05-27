@@ -75,9 +75,10 @@ client = TestClient(app)
 
 def create_test_token(username: str) -> str:
     """Create a test JWT token."""
+    user = fake_users_db[username]
     expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     token = create_access_token(
-        data={"sub": username},
+        data={"sub": username, "role": user["role"]},
         expires_delta=expires
     )
     return token
