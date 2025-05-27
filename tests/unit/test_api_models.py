@@ -1,64 +1,78 @@
 """
-Unit tests for API models.
+Tests for API models.
 """
 import pytest
+from datetime import datetime
 from pydantic import ValidationError
+from backend.llm_manager import ChatMessage
+from backend.auth import User, Token
 
-from amega_ai.api.models import (
-    UserModel,
-    APIKeyModel,
-    ModelConfigurationModel,
-)
-
-def test_user_model_validation():
-    """Test UserModel validation."""
-    # Valid user data
-    valid_data = {
-        "id": "user123",
-        "email": "test@example.com",
-        "username": "testuser",
-        "is_active": True
-    }
-    user = UserModel(**valid_data)
-    assert user.id == valid_data["id"]
-    assert user.email == valid_data["email"]
-    assert user.username == valid_data["username"]
-    assert user.is_active == valid_data["is_active"]
-
-    # Invalid email
+def test_chat_message_model():
+    """Test ChatMessage model validation."""
+    # Test valid message
+    message = ChatMessage(
+        role="user",
+        content="Hello, AI!"
+    )
+    assert message.role == "user"
+    assert message.content == "Hello, AI!"
+    assert isinstance(message.timestamp, datetime)
+    
+    # Test invalid role
     with pytest.raises(ValidationError):
-        UserModel(id="user123", email="invalid-email", username="testuser", is_active=True)
-
-def test_api_key_model():
-    """Test APIKeyModel validation."""
-    valid_data = {
-        "key": "sk-1234567890abcdef",
-        "name": "Test Key",
-        "created_at": "2024-01-01T00:00:00Z",
-        "expires_at": "2025-01-01T00:00:00Z"
-    }
-    api_key = APIKeyModel(**valid_data)
-    assert api_key.key == valid_data["key"]
-    assert api_key.name == valid_data["name"]
-
-def test_model_configuration():
-    """Test ModelConfigurationModel validation."""
-    valid_data = {
-        "model_id": "gpt-3.5-turbo",
-        "temperature": 0.7,
-        "max_tokens": 100,
-        "top_p": 1.0
-    }
-    config = ModelConfigurationModel(**valid_data)
-    assert config.model_id == valid_data["model_id"]
-    assert config.temperature == valid_data["temperature"]
-    assert config.max_tokens == valid_data["max_tokens"]
-
-    # Test invalid temperature
+        ChatMessage(
+            role="invalid_role",
+            content="Test message"
+        )
+    
+    # Test empty content
     with pytest.raises(ValidationError):
-        ModelConfigurationModel(
-            model_id="gpt-3.5-turbo",
-            temperature=2.0,  # Invalid: should be between 0 and 1
-            max_tokens=100,
-            top_p=1.0
-        ) 
+        ChatMessage(
+            role="user",
+            content=""
+        )
+
+def test_user_model():
+    """Validates the User model for correct field assignment and error handling.
+    
+    Tests successful creation of a User with valid data, ensures default values are set, and verifies that invalid email formats or missing required fields raise a ValidationError.
+    """
+    # Test valid user
+    user = User(
+        username="testuser",
+        email="test@example.com",
+        full_name="Test User"
+    )
+    assert user.username == "testuser"
+    assert user.email == "test@example.com"
+    assert user.full_name == "Test User"
+    assert user.disabled is False
+
+    # Test invalid email
+    with pytest.raises(ValidationError):
+        User(
+            username="testuser",
+            email="invalid_email"
+        )
+    
+    # Test missing required fields
+    with pytest.raises(ValidationError):
+        User()
+
+def test_token_model():
+    """
+    Tests the Token model for correct instantiation and validation errors.
+    
+    Verifies that a Token can be created with valid access_token and token_type, and asserts that missing required fields raise a ValidationError.
+    """
+    # Test valid token
+    token = Token(
+        access_token="test_token",
+        token_type="bearer"
+    )
+    assert token.access_token == "test_token"
+    assert token.token_type == "bearer"
+
+    # Test missing required fields
+    with pytest.raises(ValidationError):
+        Token() 

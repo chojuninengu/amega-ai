@@ -34,12 +34,10 @@ jobs:
           if [ $? -ne 0 ]; then
             pip install pylint
           fi
-
       - name: Ensure src directory exists
         run: |
           mkdir -p src tests
           touch src/__init__.py tests/__init__.py
-
       - name: Check formatting with Black
         if: success() || failure()  # Run even if previous step failed
         run: |
@@ -93,7 +91,6 @@ jobs:
           echo "- Type Check: ${{ job.steps.mypy.outcome || 'SKIPPED' }}" >> quality-report.md
           echo "### Summary" >> quality-report.md
           echo "Quality checks completed with non-blocking warnings." >> quality-report.md
-
       - name: Upload quality report
         if: always()
         uses: actions/upload-artifact@v3
@@ -116,7 +113,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install mkdocs mkdocs-material
-
       - name: Build documentation
         run: mkdocs build --strict
 

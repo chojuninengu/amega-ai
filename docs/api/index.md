@@ -1,6 +1,24 @@
 # API Documentation
 
-Welcome to the Amega AI API documentation. This guide will help you understand and integrate with our API.
+Welcome to the Amega AI API documentation. This guide will help you understand how to interact with our API.
+
+## Quick Start
+
+1. First, check out our [Authentication Guide](auth.md) to get your API credentials
+2. Browse our [API Endpoints](endpoints.md) documentation
+3. See our [Examples](examples.md) for common use cases
+
+## API Structure
+
+The Amega AI API is organized around REST principles. It accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes.
+
+## Need Help?
+
+If you need help or have questions:
+
+1. Check our [Best Practices](../guides/best-practices.md) guide
+2. Review our [Installation Guide](../guides/installation.md)
+3. See our [Contributing Guide](../development/contributing.md) if you want to help improve the API
 
 ## Getting Help
 
