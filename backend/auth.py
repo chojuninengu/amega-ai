@@ -4,13 +4,14 @@ Authentication module for AMEGA-AI
 This module handles JWT-based authentication, password hashing, and user management.
 """
 from datetime import datetime, timedelta
-from typing import Optional, Dict
-
+from typing import Optional, Dict, Literal
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr
+
+from .config import settings
 
 # Security configuration
 SECRET_KEY = "your-secret-key-please-change-in-production"  # TODO: Move to environment variables
@@ -35,9 +36,10 @@ class TokenData(BaseModel):
 class User(BaseModel):
     """User model."""
     username: str
-    email: EmailStr
+    email: Optional[EmailStr] = None
     full_name: Optional[str] = None
     disabled: bool = False
+    role: Literal["admin", "moderator", "user"] = "user"
 
 class UserInDB(User):
     """User model with hashed password."""
@@ -61,7 +63,7 @@ def get_user(username: str) -> Optional[UserInDB]:
         return UserInDB(**user_dict)
     return None
 
-def authenticate_user(username: str, password: str) -> Optional[UserInDB]:
+def authenticate_user(username: str, password: str) -> Optional[User]:
     """Authenticate user with username and password."""
     user = get_user(username)
     if not user:
