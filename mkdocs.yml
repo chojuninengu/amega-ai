@@ -1,7 +1,7 @@
 des21site_name: Amega AI
-site_url: https://amega-ai.github.io/amega-ai/
-repo_url: https://github.com/amega-ai/amega-ai
-repo_name: amega-ai/amega-ai
+site_url: https://github.com/Cameroon-Developer-Network/amega-ai.git
+repo_url: https://github.com/Cameroon-Developer-Network/amega-ai.git
+repo_name: amega-ai/
 edit_uri: edit/main/docs/
 
 docs_dir: docs
@@ -126,7 +126,7 @@ extra:
       - manage
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/amega-ai/amega-ai
+      link:https://github.com/Cameroon-Developer-Network/amega-ai.git
     - icon: fontawesome/brands/discord
       link: https://discord.gg/amega-ai-community
 
