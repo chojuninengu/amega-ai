@@ -1,53 +1,10 @@
-
+version = 1
 
 [[analyzers]]
 name = "python"
-enabled = true
 
   [analyzers.meta]
   runtime_version = "3.x.x"
 
 [[analyzers]]
 name = "shell"
-enabled = true
-
-  [analyzers.meta]
-  dialect = "bash"
-
-[[analyzers]]
-name = "test-coverage"
-enabled = true
-
-  [analyzers.meta]
-  coverage_tool = "pytest"
-  coverage_report_path = "coverage.xml"
-  minimum_coverage = 80
-
-[[analyzers]]
-name = "docker"
-enabled = true
-
-  [analyzers.meta]
-  dockerfile_paths = [
-    "Dockerfile",
-    "docker/Dockerfile.*"
-  ]
-
-[[transformers]]
-name = "black"
-enabled = true
-
-[[transformers]]
-name = "isort"
-enabled = true
-
-[exclude]
-paths = [
-  "*.pyc",
-  ".git/**",
-  ".venv/**",
-  "venv/**",
-  "build/**",
-  "dist/**",
-  "*.egg-info/**"
-]
