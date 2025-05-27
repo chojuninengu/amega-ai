@@ -50,8 +50,11 @@ jobs:
           path: ~/.cache/pre-commit
           key: pre-commit-${{ env.CACHE_VERSION }}-${{ hashFiles('.pre-commit-config.yaml') }}
 
-      - name: Run pre-commit
-        run: pre-commit run --all-files --show-diff-on-failure
+      - name: Install and run pre-commit
+        run: |
+          pip install pre-commit
+          pre-commit install
+          pre-commit run --all-files --show-diff-on-failure
 
       - name: Run type checking
         run: mypy src tests
