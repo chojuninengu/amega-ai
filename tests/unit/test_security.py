@@ -48,7 +48,7 @@ test_users = {
 
 # Add test users to fake database
 for username, user_data in test_users.items():
-    fake_users_db[username] = user_data
+    fake_users_db[username] = user_data.copy()  # Use copy to avoid reference issues
 
 # Mock endpoints for testing
 @app.get("/test/public")
