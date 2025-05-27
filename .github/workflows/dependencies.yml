@@ -1,23 +1,6 @@
 name: Dependency Management
 
 on:
-  push:
-    paths:
-      - 'requirements*.txt'
-      - 'pyproject.toml'
-      - 'poetry.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/dependencies.yml'
-  pull_request:
-    paths:
-      - 'requirements*.txt'
-      - 'pyproject.toml'
-      - 'poetry.lock'
-      - 'package.json'
-      - 'package-lock.json'
-  schedule:
-    - cron: '0 0 * * 1'  # Weekly on Monday
   workflow_dispatch:
 
 jobs:
@@ -65,29 +48,4 @@ jobs:
           else
             echo "Safety check skipped - tool or requirements not available"
           fi
-        continue-on-error: true
-
-      - name: Generate dependency report
-        if: always()
-        run: |
-          echo "## Dependency Report" > dependency-report.md
-          echo "### Python Dependencies" >> dependency-report.md
-          if [ -f "requirements.txt" ]; then
-            echo "Found requirements.txt:" >> dependency-report.md
-            echo "\`\`\`" >> dependency-report.md
-            cat requirements.txt >> dependency-report.md
-            echo "\`\`\`" >> dependency-report.md
-          else
-            echo "No requirements.txt found." >> dependency-report.md
-          fi
-          echo "### Status" >> dependency-report.md
-          echo "- Requirements Check: ${{ job.steps.validate.outcome || 'SKIPPED' }}" >> dependency-report.md
-          echo "- Security Check: ${{ job.steps.safety.outcome || 'SKIPPED' }}" >> dependency-report.md
-
-      - name: Upload dependency report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: dependency-report
-          path: dependency-report.md
-          retention-days: 5 
+        continue-on-error: true 

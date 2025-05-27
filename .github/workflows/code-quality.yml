@@ -80,25 +80,6 @@ jobs:
           fi
         continue-on-error: true
 
-      - name: Generate quality report
-        if: always()
-        run: |
-          echo "## Code Quality Report" > quality-report.md
-          echo "### Status" >> quality-report.md
-          echo "- Formatting: ${{ job.steps.black.outcome || 'SKIPPED' }}" >> quality-report.md
-          echo "- Imports: ${{ job.steps.isort.outcome || 'SKIPPED' }}" >> quality-report.md
-          echo "- Linting: ${{ job.steps.lint.outcome || 'SKIPPED' }}" >> quality-report.md
-          echo "- Type Check: ${{ job.steps.mypy.outcome || 'SKIPPED' }}" >> quality-report.md
-          echo "### Summary" >> quality-report.md
-          echo "Quality checks completed with non-blocking warnings." >> quality-report.md
-      - name: Upload quality report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-quality-report
-          path: quality-report.md
-          retention-days: 5
-
   documentation:
     runs-on: ubuntu-latest
     steps:
