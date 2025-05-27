@@ -67,19 +67,4 @@ jobs:
         run: |
           echo "Running performance checks in ${{ inputs.environment }}..."
           # Placeholder for performance checks
-          exit 0
-
-      - name: Generate Report
-        run: |
-          echo "## Deployment and Monitoring Report" > deploy-report.md
-          echo "Environment: ${{ inputs.environment }}" >> deploy-report.md
-          echo "Action: ${{ inputs.action }}" >> deploy-report.md
-          echo "Status: Completed" >> deploy-report.md
-          echo "Timestamp: $(date)" >> deploy-report.md
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: deployment-report
-          path: deploy-report.md
-          retention-days: 5 
+          exit 0 

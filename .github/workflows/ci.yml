@@ -1,18 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches: [ main, develop ]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.github/*.yml'
-  pull_request:
-    branches: [ main, develop ]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.github/*.yml'
   workflow_dispatch:
 
 env:

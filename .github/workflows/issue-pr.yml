@@ -48,7 +48,6 @@ jobs:
             } catch (e) {
               console.log('Error processing issue:', e.message);
             }
-
       - name: Check PR Title
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
@@ -74,26 +73,3 @@ jobs:
             } catch (e) {
               console.log('Error checking PR title:', e.message);
             }
-
-      - name: Generate Report
-        if: always()
-        run: |
-          echo "## Triage Report" > triage-report.md
-          echo "Event: ${{ github.event_name }}" >> triage-report.md
-          echo "Action: ${{ github.event.action }}" >> triage-report.md
-          if [ "${{ github.event_name }}" = "issues" ]; then
-            echo "Issue: #${{ github.event.issue.number }}" >> triage-report.md
-            echo "Title: ${{ github.event.issue.title }}" >> triage-report.md
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "PR: #${{ github.event.pull_request.number }}" >> triage-report.md
-            echo "Title: ${{ github.event.pull_request.title }}" >> triage-report.md
-          fi
-          echo "Status: Completed" >> triage-report.md
-
-      - name: Upload Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: triage-report
-          path: triage-report.md
-          retention-days: 5 

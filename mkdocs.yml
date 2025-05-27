@@ -1,7 +1,7 @@
 site_name: Amega AI
-site_url: https://amega-ai.github.io/amega-ai/
-repo_url: https://github.com/amega-ai/amega-ai
-repo_name: amega-ai/amega-ai
+site_url: https://github.com/Cameroon-Developer-Network/amega-ai.git
+repo_url: https://github.com/Cameroon-Developer-Network/amega-ai.git
+repo_name: amega-ai/
 edit_uri: edit/main/docs/
 
 docs_dir: docs
@@ -62,13 +62,19 @@ nav:
     - Authentication: api/auth.md
     - Endpoints: api/endpoints.md
     - Examples: api/examples.md
+    - Reference: api/reference.md
   - Guides:
     - Getting Started: guides/getting-started.md
     - Installation: guides/installation.md
     - Configuration: guides/configuration.md
     - Best Practices: guides/best-practices.md
+    - AI Models: guides/ai-models.md
+    - Security: guides/security.md
+    - Monitoring: guides/monitoring.md
+    - MLOps: guides/mlops.md
+    - Troubleshooting: guides/troubleshooting.md
   - Development:
-    - Contributing: development/contributing.md
+    - Contributing: CONTRIBUTING.md
     - Code Style: development/code-style.md
     - Testing: development/testing.md
     - Architecture: development/architecture.md
@@ -126,9 +132,9 @@ extra:
       - manage
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/amega-ai/amega-ai
+      link: https://github.com/Cameroon-Developer-Network/amega-ai
     - icon: fontawesome/brands/discord
-      link: https://discord.gg/amega-ai-community
+      link: https://discord.gg/amega-ai
 
 extra_css:
   - stylesheets/extra.css
