@@ -81,27 +81,27 @@ class Settings(BaseSettings):
     APP_NAME: str = "AMEGA-AI"
     APP_VERSION: str = "0.1.0"
     DEBUG: bool = False
-    
+
     # Server settings
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
-    
+
     # Database settings
     DATABASE_URL: Optional[PostgresDsn] = None
-    
+
     # Redis settings
     REDIS_URL: Optional[RedisDsn] = Field(
         default="redis://localhost:6379",
         description="Redis connection URL"
     )
-    
+
     # LLM Backend Selection
     ACTIVE_LLM_BACKEND: Literal["huggingface", "openai", "anthropic", "ollama"] = Field(
         default="huggingface",
         description="The active LLM backend to use"
     )
-    
+
     # LLM Backend Configurations
     HUGGINGFACE_CONFIG: BackendConfig = Field(
         default_factory=lambda: BackendConfig(
@@ -109,21 +109,21 @@ class Settings(BaseSettings):
         ),
         description="HuggingFace models configuration"
     )
-    
+
     OPENAI_CONFIG: BackendConfig = Field(
         default_factory=lambda: BackendConfig(
             model_name="gpt-3.5-turbo"
         ),
         description="OpenAI models configuration"
     )
-    
+
     ANTHROPIC_CONFIG: BackendConfig = Field(
         default_factory=lambda: BackendConfig(
             model_name="claude-3-opus-20240229"
         ),
         description="Anthropic models configuration"
     )
-    
+
     OLLAMA_CONFIG: BackendConfig = Field(
         default_factory=lambda: BackendConfig(
             model_name="llama2",
@@ -131,20 +131,20 @@ class Settings(BaseSettings):
         ),
         description="Ollama models configuration"
     )
-    
+
     # LLM Generation Parameters
     LLM_CONFIG: LLMConfig = Field(
         default_factory=LLMConfig,
         description="LLM generation parameters"
     )
-    
+
     # JWT settings
     SECRET_KEY: str = Field(
         default="your-secret-key-please-change-in-production"
     )
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
+
     # Rate limiting settings
     RATE_LIMIT_DEFAULT_RPM: int = Field(
         default=100,
@@ -158,7 +158,7 @@ class Settings(BaseSettings):
         default=50,
         description="Chat requests per minute"
     )
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True,
@@ -196,14 +196,14 @@ class Settings(BaseSettings):
     def validate_database_url(cls, v: Optional[str]) -> Optional[str]:
         """
         Validates the database URL, returning it if it is a string or None otherwise.
-        
+
         This method ensures that the database URL is either a valid string or None,
         allowing for optional configuration.
         """
         if isinstance(v, str):
             return v
         return None
-    
+
     def get_active_backend_config(self) -> BackendConfig:
         """Returns the configuration for the active LLM backend."""
         backend_configs = {
@@ -213,20 +213,20 @@ class Settings(BaseSettings):
             "ollama": self.OLLAMA_CONFIG
         }
         return backend_configs[self.ACTIVE_LLM_BACKEND]
-    
+
     @classmethod
     def from_yaml(cls, yaml_file: str | Path) -> "Settings":
         """Load settings from a YAML file."""
         yaml_file = Path(yaml_file)
         if not yaml_file.exists():
             raise FileNotFoundError(f"YAML configuration file not found: {yaml_file}")
-        
+
         with yaml_file.open("r") as f:
             yaml_data = yaml.safe_load(f)
-        
+
         # Transform YAML structure to match our settings format
         config_data = {}
-        
+
         # Handle app settings
         if "app" in yaml_data:
             config_data.update({
@@ -234,13 +234,13 @@ class Settings(BaseSettings):
                 "APP_VERSION": yaml_data["app"].get("version", cls.model_fields["APP_VERSION"].default),
                 "DEBUG": yaml_data["app"].get("debug", cls.model_fields["DEBUG"].default)
             })
-        
+
         # Handle LLM settings
         if "llm" in yaml_data:
             llm_data = yaml_data["llm"]
             if "active_backend" in llm_data:
                 config_data["ACTIVE_LLM_BACKEND"] = llm_data["active_backend"]
-            
+
             if "backends" in llm_data:
                 backends = llm_data["backends"]
                 if "huggingface" in backends:
@@ -251,10 +251,10 @@ class Settings(BaseSettings):
                     config_data["ANTHROPIC_CONFIG"] = backends["anthropic"]
                 if "ollama" in backends:
                     config_data["OLLAMA_CONFIG"] = backends["ollama"]
-            
+
             if "generation" in llm_data:
                 config_data["LLM_CONFIG"] = llm_data["generation"]
-        
+
         # Create settings instance with YAML data
         return cls(**config_data)
 
