@@ -8,7 +8,7 @@ from typing import List, Optional, Literal, Dict, Any
 from pathlib import Path
 import yaml
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field, PostgresDsn, field_validator, RedisDsn, BaseModel
+from pydantic import Field, PostgresDsn, field_validator, RedisDsn, BaseModel, model_validator
 
 class LLMConfig(BaseModel):
     """Configuration for LLM generation parameters."""
@@ -167,6 +167,23 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         validate_default=True
     )
+
+    @model_validator(mode='before')
+    @classmethod
+    def validate_backend_configs(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate and transform backend configurations from environment variables."""
+        # Handle OpenAI config
+        if values.get("ACTIVE_LLM_BACKEND") == "openai":
+            openai_config = values.get("OPENAI_CONFIG", {})
+            if isinstance(openai_config, dict):
+                if "MODEL_NAME" in openai_config:
+                    openai_config["model_name"] = openai_config.pop("MODEL_NAME")
+                if "API_KEY" in openai_config:
+                    openai_config["api_key"] = openai_config.pop("API_KEY")
+                values["OPENAI_CONFIG"] = openai_config
+
+        # Handle other backend configs similarly if needed
+        return values
 
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
