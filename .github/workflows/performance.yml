@@ -75,7 +75,7 @@ jobs:
           echo "Timestamp: $(date)" >> performance-report.md
 
       - name: Upload Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: performance-report
           path: performance-report.md
@@ -100,7 +100,7 @@ jobs:
           locust -f tests/load_test.py --headless -u 100 -r 10 --run-time 1m
 
       - name: Upload load test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: load-test-results
           path: load_test_results.csv 
