@@ -27,7 +27,7 @@ def check_role_access(user_role: str, required_role: str) -> bool:
 
 class SecurityMiddleware(BaseHTTPMiddleware):
     """Middleware for enforcing security headers and policies."""
-    
+
     def __init__(self, app: ASGIApp):
         super().__init__(app)
         self.security_headers = {
@@ -39,7 +39,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             "Referrer-Policy": "strict-origin-when-cross-origin",
             "Permissions-Policy": "geolocation=(), microphone=(), camera=()"
         }
-    
+
     def _build_csp(self) -> str:
         """Build Content Security Policy header value."""
         policies = [
@@ -53,22 +53,22 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             "form-action 'self'"
         ]
         return "; ".join(policies)
-    
+
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint
     ) -> Response:
         """Add security headers to response."""
         response = await call_next(request)
-        
+
         # Add security headers
         for header_name, header_value in self.security_headers.items():
             response.headers[header_name] = header_value
-        
+
         return response
 
 class RBACMiddleware(BaseHTTPMiddleware):
     """Middleware for Role-Based Access Control."""
-    
+
     def __init__(self, app: ASGIApp):
         super().__init__(app)
         # Define endpoint permissions
@@ -77,7 +77,7 @@ class RBACMiddleware(BaseHTTPMiddleware):
             "/test/moderator": "moderator",
             "/test/user": "user"
         }
-        
+
         # Define public endpoints
         self.public_paths = {
             "/test/public",
@@ -88,17 +88,17 @@ class RBACMiddleware(BaseHTTPMiddleware):
             "/openapi.json",
             "/health"
         }
-    
+
     def _is_public_endpoint(self, path: str) -> bool:
         """Check if endpoint is public."""
         return any(path.startswith(p) for p in self.public_paths)
-    
+
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         """Check role-based permissions."""
         # Skip RBAC for public endpoints
         if self._is_public_endpoint(request.url.path):
             return await call_next(request)
-        
+
         # Get authorization header
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
@@ -107,15 +107,15 @@ class RBACMiddleware(BaseHTTPMiddleware):
                 detail="Not authenticated",
                 headers={"WWW-Authenticate": "Bearer"}
             )
-        
+
         # Get token
         token = auth_header.split(" ")[1]
-        
+
         # Get user from token
         try:
             user = await get_current_user(token)
             request.state.user = user
-            
+
             # Check if user has required role for the endpoint
             required_role = self.endpoint_permissions.get(request.url.path)
             if required_role and not check_role_access(user.role, required_role):
@@ -123,7 +123,7 @@ class RBACMiddleware(BaseHTTPMiddleware):
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="Insufficient permissions"
                 )
-            
+
             return await call_next(request)
         except HTTPException as e:
             raise e
@@ -146,11 +146,11 @@ requires_user = requires_roles(["user"])
 
 class RequestValidationMiddleware(BaseHTTPMiddleware):
     """Middleware for request validation and sanitization."""
-    
+
     def __init__(self, app: ASGIApp):
         super().__init__(app)
         self.max_content_length = 10 * 1024 * 1024  # 10MB
-    
+
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint
     ) -> Response:
@@ -158,7 +158,7 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
         # Skip validation for GET requests
         if request.method == "GET":
             return await call_next(request)
-        
+
         # Check content length
         content_length = request.headers.get("content-length")
         if content_length and int(content_length) > self.max_content_length:
@@ -166,7 +166,7 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
                 status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
                 detail="Request too large"
             )
-        
+
         # Validate content type for POST/PUT/PATCH requests
         if request.method in ["POST", "PUT", "PATCH"]:
             content_type = request.headers.get("content-type", "")
@@ -175,5 +175,5 @@ class RequestValidationMiddleware(BaseHTTPMiddleware):
                     status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
                     detail="Unsupported media type"
                 )
-        
+
         return await call_next(request) 
