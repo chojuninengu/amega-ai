@@ -8,7 +8,7 @@ from backend.security import (
     requires_admin, requires_moderator, requires_user
 )
 from backend.auth import (
-    User, get_current_user, create_access_token,
+    User, create_access_token,
     ACCESS_TOKEN_EXPIRE_MINUTES, fake_users_db, get_password_hash
 )
 
