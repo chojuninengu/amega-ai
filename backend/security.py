@@ -126,8 +126,13 @@ class RBACMiddleware(BaseHTTPMiddleware):
     
     def _has_role_access(self, user_role: str, required_role: str) -> bool:
         """Check if user role has access to required role."""
-        allowed_roles = self.role_hierarchy.get(user_role, [])
-        return required_role in allowed_roles
+        if user_role == "admin":  # Admin has access to everything
+            return True
+        if user_role == "moderator":  # Moderator has access to moderator and user
+            return required_role in ["moderator", "user"]
+        if user_role == "user":  # User only has access to user
+            return required_role == "user"
+        return False
 
 class RequestValidationMiddleware(BaseHTTPMiddleware):
     """Middleware for request validation and sanitization."""
