@@ -132,9 +132,9 @@ extra:
       - manage
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/Cameroon-Developer-Network/amega-ai.git
+      link: https://github.com/Cameroon-Developer-Network/amega-ai
     - icon: fontawesome/brands/discord
-      link: https://discord.gg/amega-ai-community
+      link: https://discord.gg/amega-ai
 
 extra_css:
   - stylesheets/extra.css
