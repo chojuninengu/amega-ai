@@ -9,7 +9,7 @@ from fastapi import Request, Response, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.types import ASGIApp
-from .auth import get_current_user, User
+from .auth import get_current_user, User, oauth2_scheme
 from .config import settings
 
 class SecurityMiddleware(BaseHTTPMiddleware):
