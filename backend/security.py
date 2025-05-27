@@ -96,7 +96,7 @@ class RBACMiddleware(BaseHTTPMiddleware):
         if not auth_header or not auth_header.startswith("Bearer "):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Authentication required",
+                detail="Not authenticated",
                 headers={"WWW-Authenticate": "Bearer"}
             )
         
@@ -118,12 +118,6 @@ class RBACMiddleware(BaseHTTPMiddleware):
             
             return await call_next(request)
         except HTTPException as e:
-            if e.status_code == status.HTTP_401_UNAUTHORIZED:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid authentication credentials",
-                    headers={"WWW-Authenticate": "Bearer"}
-                )
             raise e
     
     def _is_public_endpoint(self, path: str) -> bool:
