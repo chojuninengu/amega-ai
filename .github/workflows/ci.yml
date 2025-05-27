@@ -44,6 +44,16 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
 
+      - name: Ensure project structure
+        run: |
+          mkdir -p src tests
+          touch src/__init__.py tests/__init__.py
+          if [ ! -d "src/amega_ai" ]; then
+            echo "Creating basic project structure"
+            mkdir -p src/amega_ai
+            touch src/amega_ai/__init__.py
+          fi
+
       - name: Cache pre-commit
         uses: actions/cache@v3
         with:
