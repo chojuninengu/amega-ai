@@ -108,7 +108,7 @@ def test_rbac_protected_endpoints_unauthorized():
     for endpoint in endpoints:
         response = client.get(endpoint)
         assert response.status_code == 401
-        assert response.json()["detail"] == "Authentication required"
+        assert response.json()["detail"] == "Not authenticated"
 
 def test_rbac_user_access():
     """Test user role access."""
