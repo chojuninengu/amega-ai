@@ -21,9 +21,10 @@ jobs:
       - name: Install firebase-admin
         run: pip install firebase-admin
 
+      - name: Write Firebase key to file
+        run: echo "${{ secrets.FIREBASE_KEY }}" > key.json
+
       - name: Update Firebase view count
-        run: |
-          echo "$FIREBASE_KEY" > key.json
-          python3 update_views.py
         env:
-          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          GOOGLE_APPLICATION_CREDENTIALS: key.json
+        run: python3 update_views.py
