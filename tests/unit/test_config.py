@@ -1,9 +1,6 @@
 """Tests for the configuration module."""
 import os
 import pytest
-from pathlib import Path
-import yaml
-from pydantic import PostgresDsn
 from backend.config import Settings, LLMConfig, BackendConfig
 
 def test_default_settings():
